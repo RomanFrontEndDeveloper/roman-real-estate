@@ -2,14 +2,14 @@ import Link from 'next/link';
 import { Logo } from '../ui/Logo';
 
 export const Header = () => {
-	const linkClass = 'hover:text-(--gold) transition';
-
+	const linkClass =
+		'text-[var(--gray)] hover:text-[var(--gold)] transition duration-300 hover:drop-shadow-[0_0_14px_rgba(201,169,110,1)] hover:scale-110';
 	return (
-		<header className='border-b border-gray-800'>
+		<header className='relative z-50 border-b border-gray-800'>
 			<div className='max-w-7xl mx-auto px-4 flex items-center justify-between py-4'>
 				<Logo />
 
-				<nav className='flex gap-6 text-sm text-gray-300'>
+				<nav className='flex gap-6 text-sm'>
 					<Link className={linkClass} href='/'>
 						Home
 					</Link>

@@ -13,7 +13,7 @@ export const Hero = () => {
 			}}
 		>
 			{/* overlay */}
-			<div className='absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-transparent' />
+			<div className='absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-transparent pointer-events-none' />
 
 			<div className='relative z-10 container'>
 				<motion.div
@@ -30,7 +30,7 @@ export const Hero = () => {
 				>
 					{/* TITLE */}
 					<motion.h1
-						className='text-5xl md:text-6xl font-bold text-(--gold)] mb-4'
+						className='text-5xl md:text-6xl font-bold text-[var(--gold)] mb-4'
 						variants={{
 							hidden: { opacity: 0, y: 40 },
 							visible: { opacity: 1, y: 0 },
@@ -55,7 +55,7 @@ export const Hero = () => {
 
 					{/* BUTTON */}
 					<motion.button
-						className='bg-(--gold) text-black px-6 py-3 rounded hover:opacity-80 transition'
+						className='bg-[var(--gold)] text-black px-6 py-3 rounded hover:opacity-80 transition'
 						variants={{
 							hidden: { opacity: 0, y: 40 },
 							visible: { opacity: 1, y: 0 },
