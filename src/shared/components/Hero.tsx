@@ -13,7 +13,7 @@ export const Hero = () => {
 			}}
 		>
 			{/* overlay */}
-			<div className='absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-transparent pointer-events-none' />
+			<div className='absolute inset-0 bg-linear-to-r from-black/60 via-black/30 to-transparent pointer-events-none' />
 
 			<div className='relative z-10 container'>
 				<motion.div

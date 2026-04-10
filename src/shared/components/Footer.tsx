@@ -4,8 +4,8 @@ export const Footer = () => {
 	const linkClass =
 		'text-[var(--gray)] hover:text-[var(--gold)] transition-all duration-500 ease-out hover:drop-shadow-[0_0_14px_rgba(201,169,110,0.6)] hover:scale-[1.03] hover:tracking-[0.10em]';
 	return (
-		<footer className='border-t border-gray-800 mt-20'>
-			<div className='max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8'>
+		<footer className='border-t border-gray-800 mt-5'>
+			<div className='max-w-7xl mx-auto px-4 py-5 grid grid-cols-1 md:grid-cols-3 gap-8'>
 				{/* Лого */}
 				<div>
 					<div className='flex items-center gap-3'>
