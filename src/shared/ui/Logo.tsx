@@ -5,7 +5,7 @@ export const Logo = () => {
 				width='40'
 				height='40'
 				viewBox='0 0 100 100'
-				className='transition hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(201,169,110,0.6)]'
+				className='transition hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(201,169,110,0.6)]'
 			>
 				{/* дах */}
 				<path
@@ -41,7 +41,7 @@ export const Logo = () => {
 			</svg>
 
 			{/* текст */}
-			<div className='hidden sm:block leading-tight'>
+			<div className='block leading-tight'>
 				<div className='text-(--gold) text-sm font-semibold'>
 					RomanRealEstate
 				</div>
