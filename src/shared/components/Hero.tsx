@@ -42,7 +42,7 @@ export const Hero = () => {
 
 					{/* TEXT */}
 					<motion.p
-						className='text-gray-300 max-w-xl mb-6'
+						className='text-[var(--gray)] max-w-xl mb-6'
 						variants={{
 							hidden: { opacity: 0, y: 40 },
 							visible: { opacity: 1, y: 0 },
