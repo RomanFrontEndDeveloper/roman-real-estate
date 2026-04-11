@@ -2,6 +2,7 @@ import './globals.css';
 import { Playfair_Display, Inter } from 'next/font/google';
 import { Header } from '@/shared/components/Header';
 import { Footer } from '@/shared/components/Footer';
+import { Providers } from './providers';
 
 const playfair = Playfair_Display({
 	subsets: ['latin'],
@@ -26,9 +27,11 @@ export default function RootLayout({
 	return (
 		<html lang='uk'>
 			<body className={`${playfair.variable} ${inter.variable}`}>
-				<Header />
-				<main className='container py-6'>{children}</main>
-				<Footer />
+				<Providers>
+					<Header />
+					<main className='container py-6'>{children}</main>
+					<Footer />
+				</Providers>
 			</body>
 		</html>
 	);

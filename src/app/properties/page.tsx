@@ -1,35 +1,38 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import { getProperties } from '@/entities/property/api/getProperties';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
 
-const properties = [
-	{
-		id: '1',
-		title: 'Modern Apartment',
-		price: 120000,
-		location: 'Kyiv',
-		image: '/images/p1.png',
-	},
-	{
-		id: '2',
-		title: 'Luxury Villa',
-		price: 450000,
-		location: 'Lviv',
-		image: '/images/p2.png',
-	},
-	{
-		id: '3',
-		title: 'City Loft',
-		price: 200000,
-		location: 'Odessa',
-		image: '/images/p3.png',
-	},
-];
-
 export default function PropertiesPage() {
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['properties'],
+		queryFn: getProperties,
+	});
+
+	if (isLoading) {
+		return (
+			<div className='text-white flex justify-center mt-5'>
+				Loading...
+			</div>
+		);
+	}
+
+	if (error) {
+		return <div className='text-red-500'>Error loading properties</div>;
+	}
+
 	return (
-		<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 pt-5'>
-			{properties.map((property) => (
-				<PropertyCard key={property.id} property={property} />
-			))}
-		</div>
+		<section>
+			<h1 className='text-3xl font-bold text-[var(--gold)] mb-6 mt-4 ml-3'>
+				Properties
+			</h1>
+
+			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
+				{data?.map((property) => (
+					<PropertyCard key={property.id} property={property} />
+				))}
+			</div>
+		</section>
 	);
 }

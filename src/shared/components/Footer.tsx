@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 export const Footer = () => {
@@ -9,44 +11,43 @@ export const Footer = () => {
 				{/* Лого */}
 				<div>
 					<div className='flex items-center gap-3'>
-						<svg
-							width='40'
-							height='40'
-							viewBox='0 0 100 100'
-							className='transition duration-300 hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(201,169,110,0.6)]'
-						>
-							{/* дах */}
-							<path
-								d='M20 50 L50 25 L80 50'
-								stroke='var(--gold)'
-								strokeWidth='3'
-								fill='none'
-								strokeLinecap='round'
-								strokeLinejoin='round'
-							/>
-
-							{/* корпус */}
-							<rect
-								x='30'
-								y='50'
+						<Link href='/'>
+							<svg
 								width='40'
-								height='25'
-								stroke='var(--gold)'
-								strokeWidth='3'
-								fill='none'
-								rx='2'
-							/>
+								height='40'
+								viewBox='0 0 100 100'
+								className='cursor-pointer transition hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(201,169,110,0.6)]'
+							>
+								<path
+									d='M20 50 L50 25 L80 50'
+									stroke='var(--gold)'
+									strokeWidth='3'
+									fill='none'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+								/>
 
-							{/* двері */}
-							<rect
-								x='47'
-								y='60'
-								width='6'
-								height='15'
-								fill='var(--gold)'
-								rx='1'
-							/>
-						</svg>
+								<rect
+									x='30'
+									y='50'
+									width='40'
+									height='25'
+									stroke='var(--gold)'
+									strokeWidth='3'
+									fill='none'
+									rx='2'
+								/>
+
+								<rect
+									x='47'
+									y='60'
+									width='6'
+									height='15'
+									fill='var(--gold)'
+									rx='1'
+								/>
+							</svg>
+						</Link>
 
 						<h2 className='text-xl font-semibold text-[var(--gold)] mb-0'>
 							RomanRealEstate
