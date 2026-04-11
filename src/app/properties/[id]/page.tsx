@@ -11,7 +11,7 @@ export default async function PropertyPage({
 	const property = await getPropertyById(id);
 
 	if (!property) {
-		return <div className='text-white'>Property not found</div>;
+		return <div className='text-white pt-6 ml-2'>Property not found</div>;
 	}
 
 	return (

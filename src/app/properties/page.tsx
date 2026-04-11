@@ -11,7 +11,7 @@ export default function PropertiesPage() {
 	const [city, setCity] = useState('');
 	const [maxPrice, setMaxPrice] = useState('');
 
-	const { data, isLoading, error } = useQuery({
+	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: ['properties'],
 		queryFn: getProperties,
 	});
@@ -40,7 +40,35 @@ export default function PropertiesPage() {
 	}
 
 	if (error) {
-		return <div className='text-red-500'>Error loading properties</div>;
+		return (
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				className='flex flex-col items-center justify-center text-center mt-25 mb-25'
+			>
+				<h2 className='text-2xl font-semibold text-red-500 mb-2'>
+					Something went wrong
+				</h2>
+
+				<p className='text-gray-400 mb-6'>
+					Failed to load properties. Please try again.
+				</p>
+
+				<button
+					onClick={() => refetch()}
+					className='
+          px-6 py-2
+          rounded-lg
+          bg-[var(--gold)]
+          transition-all duration-300
+          hover:shadow-[0_0_12px_rgba(201,169,110,0.6)]
+          active:scale-95
+        '
+				>
+					Retry
+				</button>
+			</motion.div>
+		);
 	}
 
 	return (
