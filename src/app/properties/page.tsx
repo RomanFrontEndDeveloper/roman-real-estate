@@ -5,6 +5,7 @@ import { getProperties } from '@/entities/property/api/getProperties';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { PropertyCardSkeleton } from '@/entities/property/ui/PropertyCardSkeleton';
 
 export default function PropertiesPage() {
 	const [city, setCity] = useState('');
@@ -30,8 +31,10 @@ export default function PropertiesPage() {
 
 	if (isLoading) {
 		return (
-			<div className='text-white flex justify-center mt-5'>
-				Loading...
+			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
+				{Array.from({ length: 6 }).map((_, i) => (
+					<PropertyCardSkeleton key={i} />
+				))}
 			</div>
 		);
 	}
@@ -46,14 +49,14 @@ export default function PropertiesPage() {
 				Properties
 			</h1>
 
-			<div className='flex flex-col sm:flex-row gap-4 mb-6'>
+			<div className='flex items-center flex-col sm:flex-row gap-4 mb-6'>
 				{/* CITY */}
 				<input
 					type='text'
 					placeholder='City (Kyiv, Lviv...)'
 					value={city}
 					onChange={(e) => setCity(e.target.value)}
-					className='px-4 py-2 bg-[var(--secondary)] focus:outline-none focus:border-[var(--gold)] border border-gray-700 text-white rounded w-full sm:w-[200px] max-w-[220px] focus:shadow-[0_0_8px_rgba(201,169,110,0.4)]'
+					className='px-4 py-2 bg-[var(--secondary)] focus:outline-none focus:border-[var(--gold)] border border-gray-700 text-white rounded w-full sm:w-[220px] max-w-[250px] focus:shadow-[0_0_8px_rgba(201,169,110,0.4)]'
 				/>
 
 				{/* PRICE */}
@@ -62,7 +65,7 @@ export default function PropertiesPage() {
 					placeholder='Max price'
 					value={maxPrice}
 					onChange={(e) => setMaxPrice(e.target.value)}
-					className='px-4 py-2 bg-[var(--secondary)] focus:outline-none focus:border-[var(--gold)] focus:shadow-[0_0_8px_rgba(201,169,110,0.4)] border border-gray-700 text-white rounded w-full sm:w-[200px] max-w-[220px]'
+					className='px-4 py-2 bg-[var(--secondary)] focus:outline-none focus:border-[var(--gold)] focus:shadow-[0_0_8px_rgba(201,169,110,0.4)] border border-gray-700 text-white rounded w-full sm:w-[220px] max-w-[250px]'
 				/>
 				<div className='flex items-center ml-2'>
 					<button
@@ -72,7 +75,7 @@ export default function PropertiesPage() {
 						}}
 						className='
 		            flex items-center justify-center gap-2
-		            px-4 py-2
+		            px-8 py-2.5
 	              rounded-lg
 		            bg-transparent
 		            border border-gray-700
@@ -84,7 +87,7 @@ export default function PropertiesPage() {
 		            hover:border-[var(--gold)]
 		            hover:text-[var(--gold)]
 		            hover:shadow-[0_0_8px_rgba(201,169,110,0.4)]
-
+                
 		            active:scale-95
 	            '
 					>
