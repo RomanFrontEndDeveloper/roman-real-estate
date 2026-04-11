@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 
 export const Hero = () => {
+	const title = 'Find Your Dream Property';
 	return (
 		<section
 			className='relative h-[80vh] flex items-center overflow-hidden'
@@ -13,7 +14,7 @@ export const Hero = () => {
 			}}
 		>
 			{/* overlay */}
-			<div className='absolute inset-0 bg-linear-to-r from-black/60 via-black/30 to-transparent pointer-events-none' />
+			<div className='absolute inset-0 bg-linear-to-r from-black/80 via-black/60 to-transparent pointer-events-none' />
 
 			<div className='relative z-10 container'>
 				<motion.div
@@ -29,17 +30,36 @@ export const Hero = () => {
 					}}
 				>
 					{/* TITLE */}
-					<motion.h1
-						className='text-5xl md:text-6xl font-bold text-[var(--gold)] mb-4'
-						variants={{
-							hidden: { opacity: 0, y: 40 },
-							visible: { opacity: 1, y: 0 },
-						}}
-						transition={{ duration: 0.8 }}
-					>
-						Find Your Dream <br /> Property
-					</motion.h1>
 
+					<motion.h1
+						className='
+		            text-5xl 
+		            font-bold text-[var(--gold)]
+		            mb-4
+		            max-w-[700px]
+		            leading-tight
+	            '
+						initial='hidden'
+						animate='visible'
+					>
+						{title.split(' ').map((word, index) => (
+							<motion.span
+								key={index}
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{
+									delay: index * 0.2,
+									duration: 0.6,
+									ease: 'easeInOut',
+									repeat: Infinity,
+									repeatDelay: 2,
+								}}
+								className='inline-block mr-2'
+							>
+								{word}
+							</motion.span>
+						))}
+					</motion.h1>
 					{/* TEXT */}
 					<motion.p
 						className='text-[var(--gray)] max-w-xl mb-6'
