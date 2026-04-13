@@ -6,6 +6,8 @@ import { PropertyCard } from '@/entities/property/ui/PropertyCard';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { PropertyCardSkeleton } from '@/entities/property/ui/PropertyCardSkeleton';
+import { Input } from '@/shared/ui/Input';
+import { Button } from '@/shared/ui/Button';
 
 export default function PropertiesPage() {
 	const [city, setCity] = useState('');
@@ -79,48 +81,29 @@ export default function PropertiesPage() {
 
 			<div className='flex items-center flex-col sm:flex-row gap-4 mb-6'>
 				{/* CITY */}
-				<input
-					type='text'
+				<Input
 					placeholder='City (Kyiv, Lviv...)'
 					value={city}
 					onChange={(e) => setCity(e.target.value)}
-					className='px-4 py-2 bg-[var(--secondary)] focus:outline-none focus:border-[var(--gold)] border border-gray-700 text-white rounded w-full sm:w-[220px] max-w-[250px] focus:shadow-[0_0_8px_rgba(201,169,110,0.4)]'
 				/>
 
 				{/* PRICE */}
-				<input
+				<Input
 					type='number'
 					placeholder='Max price'
 					value={maxPrice}
 					onChange={(e) => setMaxPrice(e.target.value)}
-					className='px-4 py-2 bg-[var(--secondary)] focus:outline-none focus:border-[var(--gold)] focus:shadow-[0_0_8px_rgba(201,169,110,0.4)] border border-gray-700 text-white rounded w-full sm:w-[220px] max-w-[250px]'
 				/>
 				<div className='flex items-center ml-2'>
-					<button
+					<Button
+						variant='outline'
 						onClick={() => {
 							setCity('');
 							setMaxPrice('');
 						}}
-						className='
-		            flex items-center justify-center gap-2
-		            px-8 py-2.5
-	              rounded-lg
-		            bg-transparent
-		            border border-gray-700
-	            	text-gray-400 text-sm
-		            whitespace-nowrap
-
-		            transition-all duration-300
-
-		            hover:border-[var(--gold)]
-		            hover:text-[var(--gold)]
-		            hover:shadow-[0_0_8px_rgba(201,169,110,0.4)]
-                
-		            active:scale-95
-	            '
 					>
 						Reset
-					</button>
+					</Button>
 				</div>
 			</div>
 
@@ -149,7 +132,15 @@ export default function PropertiesPage() {
 					</motion.div>
 				) : (
 					filteredProperties?.map((property) => (
-						<PropertyCard key={property.id} property={property} />
+						<motion.div
+							key={property.id}
+							variants={{
+								hidden: { opacity: 0, y: 30 },
+								visible: { opacity: 1, y: 0 },
+							}}
+						>
+							<PropertyCard property={property} />
+						</motion.div>
 					))
 				)}
 			</div>

@@ -51,8 +51,8 @@ export const Hero = () => {
 									delay: index * 0.2,
 									duration: 0.6,
 									ease: 'easeInOut',
-									repeat: Infinity,
-									repeatDelay: 2,
+									repeat: 3,
+									repeatDelay: 1,
 								}}
 								className='inline-block mr-2'
 							>
