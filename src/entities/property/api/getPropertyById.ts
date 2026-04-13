@@ -1,13 +1,10 @@
-import { Property, mockProperties } from './getProperties';
+import { Property } from '../types';
+import { properties } from '../model/data';
 
-export const getPropertyById = async (id: string): Promise<Property> => {
+export const getPropertyById = async (
+	id: string,
+): Promise<Property | undefined> => {
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
-	const property = mockProperties.find((p) => p.id === id);
-
-	if (!property) {
-		throw new Error('Property not found');
-	}
-
-	return property;
+	return properties.find((p) => p.id === id);
 };

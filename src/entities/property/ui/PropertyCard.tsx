@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Property } from '../api/getProperties';
+import { Property } from '@/entities/property/types';
 
 type Props = {
 	property: Property;
