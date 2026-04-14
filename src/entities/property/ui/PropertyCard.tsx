@@ -20,11 +20,16 @@ export const PropertyCard = ({ property }: Props) => {
 				<div className='relative'>
 					<div className='relative w-full h-[220px] overflow-hidden'>
 						<Image
-							src={property.image}
+							src={
+								typeof property.image === 'string' &&
+								property.image.startsWith('/')
+									? property.image
+									: '/placeholder.png'
+							}
 							alt={property.title}
 							fill
+							sizes='(max-width: 768px) 100vw, 33vw' // 👈 ДОДАЙ ЦЕ
 							className='object-cover transition duration-500 group-hover:scale-110'
-							sizes='(max-width: 768px) 100vw, 33vw'
 						/>
 					</div>
 

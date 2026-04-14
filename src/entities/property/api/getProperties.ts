@@ -1,14 +1,16 @@
-import { Property } from '@/entities/property/types';
-import { properties } from '../model/data';
+export const getProperties = async () => {
+	const res = await fetch('http://localhost:5000/api/properties', {
+		cache: 'no-store',
+	});
 
-export const getProperties = async (): Promise<Property[]> => {
-	try {
-		await new Promise((resolve) => setTimeout(resolve, 500));
-
-		return properties;
-	} catch (error) {
-		console.error('getProperties error:', error);
-
-		throw new Error('Failed to fetch properties');
+	if (!res.ok) {
+		throw new Error('Failed to fetch');
 	}
+
+	const data = await res.json();
+
+	return data.map((item: any) => ({
+		...item,
+		id: item._id,
+	}));
 };
