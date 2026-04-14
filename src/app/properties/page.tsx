@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { PropertyCardSkeleton } from '@/entities/property/ui/PropertyCardSkeleton';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
+import { useMemo } from 'react';
 
 export default function PropertiesPage() {
 	const [city, setCity] = useState('');
@@ -18,16 +19,18 @@ export default function PropertiesPage() {
 		queryFn: getProperties,
 	});
 
-	const filteredProperties = data?.filter((property) => {
-		const matchCity = property.location
-			.toLowerCase()
-			.includes(city.toLowerCase());
+	const filteredProperties = useMemo(() => {
+		return data?.filter((property) => {
+			const matchCity = property.location
+				.toLowerCase()
+				.includes(city.trim().toLowerCase());
 
-		const matchPrice =
-			maxPrice === '' || property.price <= Number(maxPrice);
+			const matchPrice =
+				maxPrice === '' || property.price <= Number(maxPrice);
 
-		return matchCity && matchPrice;
-	});
+			return matchCity && matchPrice;
+		});
+	}, [data, city, maxPrice]);
 
 	const text = 'No properties found';
 
