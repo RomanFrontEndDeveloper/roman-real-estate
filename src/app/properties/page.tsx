@@ -9,10 +9,13 @@ import { PropertyCardSkeleton } from '@/entities/property/ui/PropertyCardSkeleto
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function PropertiesPage() {
 	const [city, setCity] = useState('');
 	const [maxPrice, setMaxPrice] = useState('');
+
+	const router = useRouter();
 
 	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: ['properties'],
@@ -81,6 +84,27 @@ export default function PropertiesPage() {
 			<h1 className='text-3xl font-bold text-[var(--gold)] mb-6 mt-4 ml-3'>
 				Properties
 			</h1>
+			<div className='flex'>
+				<Button
+					variant='outline'
+					onClick={() => router.push('/properties/create')}
+					className='mb-5 w-35'
+				>
+					+ Add Property
+				</Button>
+			</div>
+			<div className='flex'>
+				<Button
+					variant='outline'
+					onClick={() => {
+						setCity('');
+						setMaxPrice('');
+					}}
+					className='mb-5 w-35'
+				>
+					Reset Filtres
+				</Button>
+			</div>
 
 			<div className='flex items-center flex-col sm:flex-row gap-4 mb-6'>
 				{/* CITY */}
@@ -97,17 +121,6 @@ export default function PropertiesPage() {
 					value={maxPrice}
 					onChange={(e) => setMaxPrice(e.target.value)}
 				/>
-				<div className='flex items-center ml-2'>
-					<Button
-						variant='outline'
-						onClick={() => {
-							setCity('');
-							setMaxPrice('');
-						}}
-					>
-						Reset
-					</Button>
-				</div>
 			</div>
 
 			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>

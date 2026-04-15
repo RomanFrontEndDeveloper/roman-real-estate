@@ -7,14 +7,15 @@ import { Property } from '@/entities/property/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteProperty } from '@/entities/property/api/deleteProperty';
 import { Button } from '@/shared/ui/Button';
+import { useRouter } from 'next/navigation';
 
 type Props = {
 	property: Property;
 };
 
 export const PropertyCard = ({ property }: Props) => {
+	const router = useRouter();
 	const queryClient = useQueryClient();
-
 	const mutation = useMutation({
 		mutationFn: deleteProperty,
 		onSuccess: () => {
@@ -51,8 +52,8 @@ export const PropertyCard = ({ property }: Props) => {
 						${property.price.toLocaleString()}
 					</div>
 				</div>
-				<div className='flex justify-between'>
-					<div className='p-4'>
+				<div className='flex justify-between items-center'>
+					<div className='flex flex-col gap-2 p-4'>
 						<h3 className='text-lg font-semibold mb-1 hover:text-[var(--gold)] transition'>
 							{property.title}
 						</h3>
@@ -61,11 +62,22 @@ export const PropertyCard = ({ property }: Props) => {
 							{property.location}
 						</p>
 					</div>
-					<div className='pt-6 pr-6'>
+
+					<div className='flex flex-col gap-2 p-4'>
 						<Button
 							variant='outline'
 							onClick={(e) => {
-								e.preventDefault(); // ❗ щоб не відкривався Link
+								e.preventDefault();
+								router.push(`/properties/${property.id}/edit`);
+							}}
+						>
+							Edit
+						</Button>
+
+						<Button
+							variant='outline'
+							onClick={(e) => {
+								e.preventDefault();
 
 								if (confirm('Delete this property?')) {
 									mutation.mutate(property.id);
