@@ -4,12 +4,24 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Property } from '@/entities/property/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteProperty } from '@/entities/property/api/deleteProperty';
+import { Button } from '@/shared/ui/Button';
 
 type Props = {
 	property: Property;
 };
 
 export const PropertyCard = ({ property }: Props) => {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		mutationFn: deleteProperty,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['properties'] });
+		},
+	});
+
 	return (
 		<Link href={`/properties/${property.id}`}>
 			<motion.div
@@ -39,13 +51,30 @@ export const PropertyCard = ({ property }: Props) => {
 						${property.price.toLocaleString()}
 					</div>
 				</div>
+				<div className='flex justify-between'>
+					<div className='p-4'>
+						<h3 className='text-lg font-semibold mb-1 hover:text-[var(--gold)] transition'>
+							{property.title}
+						</h3>
 
-				<div className='p-4'>
-					<h3 className='text-lg font-semibold mb-1 hover:text-[var(--gold)] transition'>
-						{property.title}
-					</h3>
+						<p className='text-gray-400 text-sm'>
+							{property.location}
+						</p>
+					</div>
+					<div className='pt-6 pr-6'>
+						<Button
+							variant='outline'
+							onClick={(e) => {
+								e.preventDefault(); // ❗ щоб не відкривався Link
 
-					<p className='text-gray-400 text-sm'>{property.location}</p>
+								if (confirm('Delete this property?')) {
+									mutation.mutate(property.id);
+								}
+							}}
+						>
+							Delete
+						</Button>
+					</div>
 				</div>
 			</motion.div>
 		</Link>
