@@ -23,7 +23,7 @@ export const Input = ({
         border border-gray-700
         text-white
         rounded
-        w-full sm:w-[200px]
+        w-full sm:w-[250px]
         focus:outline-none
         focus:border-[var(--gold)]
         focus:shadow-[0_0_8px_rgba(201,169,110,0.4)]
