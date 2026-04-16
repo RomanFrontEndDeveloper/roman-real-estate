@@ -8,7 +8,7 @@ const propertySchema = new mongoose.Schema(
 		image: { type: String, required: true },
 	},
 	{
-		timestamps: true,
+		timestamps: true, //автоматичний контроль часу створення і оновлення документа
 	},
 );
 

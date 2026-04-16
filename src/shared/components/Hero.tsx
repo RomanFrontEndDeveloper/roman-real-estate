@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export const Hero = () => {
 	const title = 'Find Your Dream Property';
@@ -74,18 +75,20 @@ export const Hero = () => {
 					</motion.p>
 
 					{/* BUTTON */}
-					<motion.button
-						className='bg-[var(--gold)] text-black px-6 py-3 rounded hover:opacity-80 transition'
-						variants={{
-							hidden: { opacity: 0, y: 40 },
-							visible: { opacity: 1, y: 0 },
-						}}
-						transition={{ duration: 0.8 }}
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
-					>
-						View Properties
-					</motion.button>
+					<Link href='/properties'>
+						<motion.button
+							className='bg-[var(--gold)] text-black px-6 py-3 rounded hover:scale-104 ease-linear transition'
+							variants={{
+								hidden: { opacity: 0, y: 40 },
+								visible: { opacity: 1, y: 0 },
+							}}
+							transition={{ duration: 0.8 }}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							View Properties
+						</motion.button>
+					</Link>
 				</motion.div>
 			</div>
 		</section>
