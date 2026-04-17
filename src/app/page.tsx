@@ -1,8 +1,9 @@
 import { Hero } from '@/shared/components/Hero';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
-import { properties } from '@/entities/property/model/data';
+import { getProperties } from '@/entities/property/api/getProperties';
 
-export default function Home() {
+export default async function Home() {
+	const properties = await getProperties();
 	return (
 		<>
 			{/* HERO */}
@@ -15,7 +16,7 @@ export default function Home() {
 				</h2>
 
 				<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
-					{properties.map((property) => (
+					{properties.slice(0, 3).map((property) => (
 						<PropertyCard key={property.id} property={property} />
 					))}
 				</div>

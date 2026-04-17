@@ -4,9 +4,8 @@ export const getPropertyById = async (id: string) => {
 	});
 
 	if (!res.ok) {
-		throw new Error('Property not found');
+		return null;
 	}
-
 	const item = await res.json();
 
 	return {

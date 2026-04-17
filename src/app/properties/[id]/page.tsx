@@ -4,9 +4,9 @@ import { getPropertyById } from '@/entities/property/api/getPropertyById';
 export default async function PropertyPage({
 	params,
 }: {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 }) {
-	const { id } = params;
+	const { id } = await params;
 
 	const property = await getPropertyById(id);
 
