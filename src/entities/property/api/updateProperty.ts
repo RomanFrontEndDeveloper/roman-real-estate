@@ -10,10 +10,17 @@ export const updateProperty = async ({
 		image: string;
 	};
 }) => {
+	const token = localStorage.getItem('token');
+
+	if (!token) {
+		throw new Error('No token found. Please login.');
+	}
+
 	const res = await fetch(`http://localhost:5000/api/properties/${id}`, {
 		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`, // 🔐 ДОДАЛИ
 		},
 		body: JSON.stringify(data),
 	});
