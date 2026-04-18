@@ -9,6 +9,7 @@ const router = Router();
 // Створюємо новий router — окремий "міні-сервер" для auth (логін, реєстрація і т.д.)
 
 router.post('/register', authController.register);
+
 // Коли приходить POST запит на /register → викликається authController.register
 
 // Тобто:
@@ -17,6 +18,8 @@ router.post('/register', authController.register);
 // → потім викликається controller
 // → controller викликає service
 // → service працює з БД
+
+router.post('/login', authController.login);
 
 export default router;
 // Експортуємо router, щоб підключити його в app.ts:

@@ -37,7 +37,7 @@ export const PropertyCard = ({ property }: Props) => {
 								typeof property.image === 'string' &&
 								property.image.startsWith('/')
 									? property.image
-									: '/placeholder.png'
+									: '/placeholder2.png'
 							}
 							alt={property.title}
 							fill

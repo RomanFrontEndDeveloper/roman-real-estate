@@ -17,7 +17,7 @@ export default async function PropertyPage({
 	const imageSrc =
 		typeof property.image === 'string' && property.image.startsWith('/')
 			? property.image
-			: '/placeholder.png';
+			: '/placeholder2.png';
 
 	return (
 		<section className='mt-10'>
