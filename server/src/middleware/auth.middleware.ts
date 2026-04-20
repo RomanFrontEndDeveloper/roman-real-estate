@@ -14,7 +14,7 @@ export const verifyToken = (
 	next: NextFunction,
 ) => {
 	try {
-		const authHeader = req.headers.authorization;
+		const authHeader = req.headers.authorization; //Візьми токен, який клієнт передав у заголовках
 
 		// ❌ якщо немає заголовка
 		if (!authHeader) {
@@ -22,7 +22,7 @@ export const verifyToken = (
 		}
 
 		// 👉 "Bearer TOKEN"
-		const token = authHeader.split(' ')[1];
+		const token = authHeader.split(' ')[1]; //розбиває рядок по пробілу бере 2й елем
 
 		if (!token) {
 			return res.status(401).json({ message: 'Invalid token' });
@@ -30,12 +30,18 @@ export const verifyToken = (
 
 		// 🔐 перевіряємо токен
 		const decoded = jwt.verify(token, 'SECRET_KEY') as {
+			//'SECRET_KEY' - process.env.JWT_SECRET
+			//перевіряє чи токен справжній
 			id: string;
 			role: string;
 		};
 
 		// 💾 кладемо user в req
-		req.user = decoded;
+		req.user = decoded; // “Збережи дані користувача всередині запиту”
+		// req.user = {
+		// 	id: '123',
+		// 	role: 'user',
+		// };
 
 		next();
 	} catch (error) {

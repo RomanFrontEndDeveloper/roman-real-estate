@@ -10,9 +10,10 @@ import { Button } from '@/shared/ui/Button';
 
 export default function EditPropertyPage() {
 	const { id } = useParams();
-	const router = useRouter();
-	const queryClient = useQueryClient();
+	const router = useRouter(); //керування переходами між сторінками
+	const queryClient = useQueryClient(); //дає тобі доступ до глобального кешу запитів.(менеджер кешу даних)
 
+	//Завантаж property по id і збережи результат у data
 	const { data } = useQuery({
 		queryKey: ['property', id],
 		queryFn: () => getPropertyById(id as string),
@@ -33,10 +34,11 @@ export default function EditPropertyPage() {
 		}
 	}, [data]);
 
+	//логіка оновлення даних (PATCH) через TanStack Query
 	const mutation = useMutation({
-		mutationFn: updateProperty,
+		mutationFn: updateProperty, //функція, яка реально робить запит updateProperty({ id, data })
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['properties'] });
+			queryClient.invalidateQueries({ queryKey: ['properties'] }); //Список properties застарів — перезавантаж його
 			router.push('/properties');
 		},
 	});
@@ -55,17 +57,11 @@ export default function EditPropertyPage() {
 		});
 	};
 
+	//TanStack Query = “бібліотека - розумний fetch + кеш + автоматичні оновлення”
+
 	return (
 		<section className='flex justify-center mt-10 px-4'>
 			<div className='w-full max-w-xl'>
-				{/* 🔙 Кнопка назад */}
-				<Button
-					type='button'
-					onClick={() => router.back()}
-					className='mb-6 flex m-auto'
-				>
-					← Back
-				</Button>
 				<h1 className='text-3xl font-bold text-[var(--gold)] mb-8 text-center'>
 					Edit Property
 				</h1>

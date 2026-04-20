@@ -10,6 +10,6 @@ export const getPropertyById = async (id: string) => {
 
 	return {
 		...item,
-		id: item._id,
+		id: item._id, //Візьми об’єкт і додай до нього нормальне поле id замість _id
 	};
 };

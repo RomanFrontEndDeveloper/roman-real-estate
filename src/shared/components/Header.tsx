@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { Logo } from '../ui/Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Button';
+import { useRouter } from 'next/navigation';
 
 export const Header = () => {
 	const [isOpen, setIsOpen] = useState(false);
+	const router = useRouter();
 
 	const linkClass =
 		'text-[var(--gray)] hover:text-[var(--gold)] transition duration-300 hover:drop-shadow-[0_0_34px_rgba(201,169,110,1)] hover:scale-102';
@@ -31,6 +33,14 @@ export const Header = () => {
 					<Link className={linkClass2} href='/agents'>
 						Agents
 					</Link>
+					{/* 🔙 Кнопка назад */}
+					<Button
+						type='button'
+						onClick={() => router.back()}
+						className='flex items-center'
+					>
+						← Back
+					</Button>
 					<Button
 						variant='outline'
 						className='flex items-center pl-5 pr-5'
@@ -84,9 +94,16 @@ export const Header = () => {
 						<Button
 							onClick={() => setIsOpen(false)}
 							variant='outline'
-							className='absolute right-5 top-5 pl-5 pr-5'
+							className='absolute right-5 top-5 pl-6 pr-5'
 						>
 							<Link href='/login'>Login</Link>
+						</Button>
+						<Button
+							type='button'
+							onClick={() => router.back()}
+							className='absolute right-5 top-18 mb-6 flex items-center m-auto'
+						>
+							← Back
 						</Button>
 					</motion.div>
 				)}

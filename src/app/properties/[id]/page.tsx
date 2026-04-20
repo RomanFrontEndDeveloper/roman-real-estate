@@ -1,3 +1,5 @@
+//👉 Це серверна сторінка
+
 import Image from 'next/image';
 import { getPropertyById } from '@/entities/property/api/getPropertyById';
 

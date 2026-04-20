@@ -13,3 +13,5 @@ router.patch('/:id', verifyToken, controller.updateProperty);
 router.delete('/:id', verifyToken, controller.deleteProperty);
 
 export default router;
+
+//Middleware — це функція, яка виконується МІЖ запитом і відповіддю

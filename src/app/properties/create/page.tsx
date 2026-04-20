@@ -43,15 +43,6 @@ export default function CreatePropertyPage() {
 	return (
 		<section className='flex justify-center mt-10 px-4'>
 			<div className='w-full max-w-xl'>
-				{/* 🔙 Кнопка назад */}
-				<Button
-					type='button'
-					onClick={() => router.back()}
-					className='mb-6 flex m-auto'
-				>
-					← Back
-				</Button>
-
 				<h1 className='text-3xl font-bold text-[var(--gold)] mb-8 text-center'>
 					Create Property
 				</h1>

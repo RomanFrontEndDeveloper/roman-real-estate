@@ -16,12 +16,12 @@ export default function LoginPage() {
 			const res = await fetch('http://localhost:5000/api/auth/login', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json', //- відправляю JSON
 				},
-				body: JSON.stringify({ email, password }),
+				body: JSON.stringify({ email, password }), //це попадає на бекенді - у controller:
 			});
 
-			const data = await res.json();
+			const data = await res.json(); //витягує дані з відповіді сервера у форматі JSON після fetch
 
 			// 🔐 збереження токена
 			if (data.token) {

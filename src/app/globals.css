@@ -58,3 +58,5 @@ input:-webkit-autofill:focus {
 	-webkit-text-fill-color: var(--text);
 	transition: background-color 5000s ease-in-out 0s;
 }
+/* повністю відключає стандартний стиль autofill браузера
+ і змушує input виглядати так, як ти задумав */
