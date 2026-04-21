@@ -97,3 +97,15 @@ export const updateProperty = async (req: AuthRequest, res: Response) => {
 		res.status(500).json({ message: 'Server error' });
 	}
 };
+
+export const getMyProperties = async (req: AuthRequest, res: Response) => {
+	try {
+		const properties = await PropertyModel.find({
+			owner: req.user!.id, // 🔥 тільки свої
+		});
+
+		res.json(properties);
+	} catch (error) {
+		res.status(500).json({ message: 'Failed to fetch properties' });
+	}
+};

@@ -10,6 +10,7 @@ import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function PropertiesPage() {
 	const [city, setCity] = useState('');
@@ -84,6 +85,11 @@ export default function PropertiesPage() {
 			<h1 className='text-3xl font-bold text-[var(--gold)] mb-6 mt-4 ml-3'>
 				Properties
 			</h1>
+			<Link href='/my-properties'>
+				<Button variant='outline' className='mb-5 w-35 mr-5'>
+					My Properties
+				</Button>
+			</Link>
 			<div className='flex'>
 				<Button
 					variant='outline'

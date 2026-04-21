@@ -39,7 +39,7 @@ export default function EditPropertyPage() {
 		mutationFn: updateProperty, //функція, яка реально робить запит updateProperty({ id, data })
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['properties'] }); //Список properties застарів — перезавантаж його
-			router.push('/properties');
+			router.push('/my-properties');
 		},
 	});
 

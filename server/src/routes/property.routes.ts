@@ -5,6 +5,7 @@ import { verifyToken } from '../middleware/auth.middleware';
 const router = Router();
 
 router.get('/', controller.getProperties);
+router.get('/my', verifyToken, controller.getMyProperties);
 router.get('/:id', controller.getPropertyById);
 
 // 🔐 захищені
