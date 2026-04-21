@@ -11,7 +11,7 @@ export default function CreatePropertyPage() {
 	const [title, setTitle] = useState('');
 	const [price, setPrice] = useState('');
 	const [location, setLocation] = useState('');
-	const [image, setImage] = useState('');
+	const [file, setFile] = useState<File | null>(null);
 
 	const queryClient = useQueryClient();
 	const router = useRouter();
@@ -24,20 +24,47 @@ export default function CreatePropertyPage() {
 		},
 	});
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!title || !price || !location || !image) {
+		if (!title || !price || !location || !file) {
 			alert('Fill all fields');
 			return;
 		}
 
-		mutation.mutate({
-			title,
-			price: Number(price),
-			location,
-			image,
-		});
+		try {
+			// 🔥 1. Upload файла
+			const formData = new FormData();
+			formData.append('image', file);
+
+			const uploadRes = await fetch(
+				'http://localhost:5000/api/properties/upload',
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
+					},
+					body: formData,
+				},
+			);
+
+			if (!uploadRes.ok) {
+				throw new Error('Upload failed');
+			}
+
+			const uploadData = await uploadRes.json();
+
+			// 🔥 2. Створення property
+			mutation.mutate({
+				title,
+				price: Number(price),
+				location,
+				image: uploadData.imageUrl,
+			});
+		} catch (error) {
+			console.error(error);
+			alert('Error creating property');
+		}
 	};
 
 	return (
@@ -70,11 +97,17 @@ export default function CreatePropertyPage() {
 						onChange={(e) => setLocation(e.target.value)}
 					/>
 
-					<Input
-						placeholder='/images/p1.png'
-						value={image}
-						onChange={(e) => setImage(e.target.value)}
+					<input
+						type='file'
+						className='w-[210px] bg-amber-950 p-2'
+						onChange={(e) => {
+							if (e.target.files) {
+								setFile(e.target.files[0]);
+							}
+						}}
 					/>
+
+					{file && <p>{file.name}</p>}
 
 					<Button type='submit' className='sm:w-[200px] mt-2'>
 						{mutation.isPending ? 'Creating...' : 'Create'}

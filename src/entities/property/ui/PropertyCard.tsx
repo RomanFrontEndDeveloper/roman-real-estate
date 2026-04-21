@@ -32,17 +32,11 @@ export const PropertyCard = ({ property }: Props) => {
 			>
 				<div className='relative'>
 					<div className='relative w-full h-[220px] overflow-hidden'>
-						<Image
-							src={
-								typeof property.image === 'string' &&
-								property.image.startsWith('/')
-									? property.image
-									: '/placeholder2.png'
-							}
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src={property.image}
 							alt={property.title}
-							fill
-							sizes='(max-width: 768px) 100vw, 33vw' // 👈 ДОДАЙ ЦЕ
-							className='object-cover transition duration-500 group-hover:scale-110'
+							className='w-full h-[200px] object-cover'
 						/>
 					</div>
 
