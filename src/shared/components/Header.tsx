@@ -23,7 +23,7 @@ export const Header = () => {
 				<Logo />
 
 				{/* DESKTOP MENU */}
-				<nav className='hidden sm:flex gap-6 text-sm'>
+				<nav className='hidden sm:flex items-center gap-4 text-sm'>
 					<Link className={linkClass2} href='/'>
 						Home
 					</Link>
@@ -37,16 +37,26 @@ export const Header = () => {
 					<Button
 						type='button'
 						onClick={() => router.back()}
-						className='flex items-center'
+						className='flex items-center h-[37px] w-[85px] '
 					>
 						← Back
 					</Button>
-					<Button
-						variant='outline'
-						className='flex items-center pl-5 pr-5'
-					>
-						<Link href='/login'>Login</Link>
-					</Button>
+					<div className='flex flex-col items-center gap-[8px]'>
+						<Button
+							onClick={() => setIsOpen(false)}
+							variant='outline'
+							className='w-[80px] flex justify-center'
+						>
+							<Link href='/register'>Register</Link>
+						</Button>
+
+						<Button
+							variant='outline'
+							className='w-[80px] flex justify-center'
+						>
+							<Link href='/login'>Login</Link>
+						</Button>
+					</div>
 				</nav>
 
 				{/* BURGER */}
@@ -91,17 +101,26 @@ export const Header = () => {
 								Agents
 							</Link>
 						</nav>
+
 						<Button
 							onClick={() => setIsOpen(false)}
 							variant='outline'
-							className='absolute right-5 top-5 pl-6 pr-5'
+							className='absolute right-5 top-2 pl-5 pr-5 w-[100px]'
+						>
+							<Link href='/register'>Register</Link>
+						</Button>
+						<Button
+							onClick={() => setIsOpen(false)}
+							variant='outline'
+							className='absolute right-5 top-14 pl-8 pr-7 w-[100px]'
 						>
 							<Link href='/login'>Login</Link>
 						</Button>
+
 						<Button
 							type='button'
 							onClick={() => router.back()}
-							className='absolute right-5 top-18 mb-6 flex items-center m-auto'
+							className='absolute right-5 top-26 mb-6 flex items-center m-auto'
 						>
 							← Back
 						</Button>

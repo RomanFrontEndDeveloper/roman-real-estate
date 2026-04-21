@@ -14,6 +14,7 @@ export const register = async (email: string, password: string) => {
 	const user = await UserModel.create({
 		email,
 		password: hashedPassword,
+		role: 'agent',
 	});
 
 	return user;
