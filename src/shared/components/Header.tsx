@@ -21,6 +21,13 @@ export const Header = () => {
 			{/* TOP BAR */}
 			<div className='max-w-7xl mx-auto px-4 flex items-center justify-between py-4'>
 				<Logo />
+				<Button
+					type='button'
+					className='sm:hidden'
+					onClick={() => router.back()}
+				>
+					← Back
+				</Button>
 
 				{/* DESKTOP MENU */}
 				<nav className='hidden sm:flex items-center gap-4 text-sm'>
@@ -115,14 +122,6 @@ export const Header = () => {
 							className='absolute right-5 top-14 pl-8 pr-7 w-[100px]'
 						>
 							<Link href='/login'>Login</Link>
-						</Button>
-
-						<Button
-							type='button'
-							onClick={() => router.back()}
-							className='absolute right-5 top-26 mb-6 flex items-center m-auto'
-						>
-							← Back
 						</Button>
 					</motion.div>
 				)}

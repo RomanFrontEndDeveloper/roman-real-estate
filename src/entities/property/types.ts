@@ -3,5 +3,5 @@ export interface Property {
 	title: string;
 	price: number;
 	location: string;
-	image: string;
+	images: string[];
 }

@@ -9,6 +9,7 @@ export const getProperties = async (req: AuthRequest, res: Response) => {
 		const properties = await service.getAll();
 		res.json(properties);
 	} catch (error) {
+		console.error('GET PROPERTIES ERROR:', error);
 		res.status(500).json({ message: 'Server error' });
 	}
 };
@@ -24,34 +25,42 @@ export const getPropertyById = async (req: AuthRequest, res: Response) => {
 
 		res.json(property);
 	} catch (error) {
+		console.error('GET BY ID ERROR:', error);
 		res.status(500).json({ message: 'Server error' });
 	}
 };
 
-// ➕ Створити (🔥 ДОДАЛИ owner)
+// ➕ Створити
 export const createProperty = async (req: AuthRequest, res: Response) => {
 	try {
+		const files = req.files as Express.Multer.File[];
+
+		const imagePaths = files?.map((file) => file.path) || [];
+
 		const property = await PropertyModel.create({
-			...req.body,
-			owner: req.user!.id, // 🔥 головне
+			title: req.body.title,
+			price: Number(req.body.price) || 0,
+			location: req.body.location,
+			images: imagePaths,
+			owner: req.user!.id,
 		});
 
 		res.status(201).json(property);
-	} catch (error) {
-		res.status(400).json({ message: 'Failed to create property' });
+	} catch (error: any) {
+		console.error('CREATE ERROR:', error);
+		res.status(400).json({ message: error.message });
 	}
 };
 
 // ❌ Видалити
 export const deleteProperty = async (req: AuthRequest, res: Response) => {
 	try {
-		const property = await PropertyModel.findById(req.params.id as string);
+		const property = await PropertyModel.findById(req.params.id);
 
 		if (!property) {
 			return res.status(404).json({ message: 'Not found' });
 		}
 
-		// 🔥 ТУТ ТЕЖ
 		if (
 			req.user!.role !== 'admin' &&
 			property.owner.toString() !== req.user!.id
@@ -63,6 +72,7 @@ export const deleteProperty = async (req: AuthRequest, res: Response) => {
 
 		res.status(204).send();
 	} catch (error) {
+		console.error('DELETE ERROR:', error);
 		res.status(500).json({ message: 'Server error' });
 	}
 };
@@ -70,15 +80,29 @@ export const deleteProperty = async (req: AuthRequest, res: Response) => {
 // ✏️ Оновити
 export const updateProperty = async (req: AuthRequest, res: Response) => {
 	try {
-		const { id } = req.params;
+		const { title, price, location } = req.body;
 
-		const property = await PropertyModel.findById(id as string);
+		const files = req.files as Express.Multer.File[];
+
+		// 🔥 старі фото
+		const existingImages = Array.isArray(req.body.existingImages)
+			? req.body.existingImages
+			: req.body.existingImages
+				? [req.body.existingImages]
+				: [];
+
+		// 🔥 нові фото
+		const newImages = files?.map((file) => file.path) || [];
+
+		const updatedImages = [...existingImages, ...newImages];
+
+		const property = await PropertyModel.findById(req.params.id);
 
 		if (!property) {
 			return res.status(404).json({ message: 'Not found' });
 		}
 
-		// 🔥 ОЦЕ ВСТАВЛЯЄШ СЮДИ
+		// 🔐 перевірка власника
 		if (
 			req.user!.role !== 'admin' &&
 			property.owner.toString() !== req.user!.id
@@ -86,26 +110,30 @@ export const updateProperty = async (req: AuthRequest, res: Response) => {
 			return res.status(403).json({ message: 'Forbidden' });
 		}
 
-		const updated = await PropertyModel.findByIdAndUpdate(
-			id as string,
-			req.body,
-			{ new: true },
-		);
+		property.title = title;
+		property.price = Number(price) || 0;
+		property.location = location;
+		property.images = updatedImages;
 
-		res.json(updated);
+		await property.save();
+
+		res.json(property);
 	} catch (error) {
+		console.error('UPDATE ERROR:', error);
 		res.status(500).json({ message: 'Server error' });
 	}
 };
 
+// 📥 Мої оголошення
 export const getMyProperties = async (req: AuthRequest, res: Response) => {
 	try {
 		const properties = await PropertyModel.find({
-			owner: req.user!.id, // 🔥 тільки свої
+			owner: req.user!.id,
 		});
 
 		res.json(properties);
 	} catch (error) {
+		console.error('MY PROPERTIES ERROR:', error);
 		res.status(500).json({ message: 'Failed to fetch properties' });
 	}
 };

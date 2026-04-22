@@ -11,6 +11,7 @@ app.use(express.json()); //middleware, який парсить JSON.
 app.use('/api/properties', propertyRoutes); //підключення роутів для нерухомості.
 app.use('/api/auth', authRoutes); //підключення роутів для авторизації
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
 	res.send('API is working 🚀');

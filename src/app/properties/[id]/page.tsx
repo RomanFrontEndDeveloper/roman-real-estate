@@ -1,55 +1,119 @@
-//👉 Це серверна сторінка
+'use client';
 
-import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
 import { getPropertyById } from '@/entities/property/api/getPropertyById';
+import { Button } from '@/shared/ui/Button';
 
-export default async function PropertyPage({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
-	const { id } = await params;
+export default function PropertyPage() {
+	const { id } = useParams();
+	const router = useRouter();
 
-	const property = await getPropertyById(id);
+	const { data: property, isLoading } = useQuery({
+		queryKey: ['property', id],
+		queryFn: () => getPropertyById(id as string),
+	});
+
+	if (isLoading) {
+		return <div className='text-white pt-6 ml-2'>Loading...</div>;
+	}
 
 	if (!property) {
 		return <div className='text-white pt-6 ml-2'>Property not found</div>;
 	}
 
-	const imageSrc =
-		typeof property.image === 'string' && property.image.startsWith('/')
-			? property.image
-			: '/placeholder2.png';
-
 	return (
 		<section className='mt-10'>
-			{/* IMAGE */}
-			<div className='relative w-full h-[350px] overflow-hidden rounded mb-6 group'>
-				<Image
-					src={imageSrc}
-					alt={property.title}
-					fill
-					className='object-cover transition duration-500 group-hover:scale-110'
-					sizes='(max-width: 768px) 100vw, 1200px'
-				/>
-
-				<div className='absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition' />
+			{/* 🔥 ГАЛЕРЕЯ */}
+			<div className='w-full mb-6'>
+				<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
+					{property.images?.length > 0 ? (
+						property.images.map((img, index) => (
+							<img
+								key={index}
+								src={`http://localhost:5000/${img}`}
+								className='w-full h-[220px] sm:h-[200px] md:h-[180px] object-cover rounded'
+								alt={property.title}
+							/>
+						))
+					) : (
+						<img
+							src='/placeholder2.png'
+							className='w-full h-[220px] object-cover rounded'
+							alt='no image'
+						/>
+					)}
+				</div>
 			</div>
 
-			<h1 className='text-3xl sm:text-4xl font-bold text-[var(--gold)] mb-2'>
-				{property.title}
-			</h1>
+			{/* 🔥 КНОПКА */}
 
-			<p className='text-gray-400 mb-4'>{property.location}</p>
+			{/* 🔥 ІНФА */}
+			<div className='flex flex-col sm:flex-row sm:justify-between gap-6 bg-[#0f0f0f] p-6 sm:p-8 rounded-2xl border border-gray-800 shadow-lg relative'>
+				{/* LEFT */}
+				<div className='max-w-xl'>
+					<h1 className='text-3xl sm:text-4xl font-bold text-[var(--gold)] mb-2 tracking-wide'>
+						{property.title}
+					</h1>
 
-			<p className='text-2xl font-semibold mb-6'>
-				${property.price.toLocaleString()}
-			</p>
+					<p className='text-gray-400 mb-4'>📍 {property.location}</p>
 
-			<p className='text-gray-300 max-w-xl'>
-				Luxury property with modern design, perfect location and premium
-				infrastructure.
-			</p>
+					<p className='text-2xl sm:text-3xl font-semibold text-white mb-4'>
+						${property.price.toLocaleString()}
+					</p>
+				</div>
+
+				{/* RIGHT BUTTON */}
+				<div className='absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 w-[120px]'>
+					{/* EDIT */}
+					<Button
+						variant='outline'
+						className='
+      w-full
+      px-4 py-2
+      border border-gray-600
+      text-white
+      rounded-xl
+      bg-white/5 backdrop-blur-md
+      hover:bg-white hover:text-black
+      hover:scale-105
+      transition-all duration-300
+      shadow-md
+    '
+						onClick={() =>
+							router.push(`/properties/${property.id}/edit`)
+						}
+					>
+						✏️ Edit
+					</Button>
+
+					{/* DELETE */}
+					<Button
+						variant='outline'
+						className='
+      w-full
+      px-4 py-2
+      border border-red-500/40
+      text-red-400
+      rounded-xl
+      bg-red-500/10 backdrop-blur-md
+      hover:bg-red-500 hover:text-white
+      hover:scale-105
+      transition-all duration-300
+      shadow-md
+    '
+						onClick={(e) => {
+							e.preventDefault();
+
+							if (confirm('Delete this property?')) {
+								mutation.mutate(property.id);
+							}
+						}}
+					>
+						🗑 Delete
+					</Button>
+				</div>
+			</div>
 		</section>
 	);
 }

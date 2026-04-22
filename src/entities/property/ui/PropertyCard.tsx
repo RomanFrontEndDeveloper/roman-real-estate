@@ -30,24 +30,29 @@ export const PropertyCard = ({ property }: Props) => {
 				whileHover={{ scale: 1.04, y: -5 }}
 				transition={{ duration: 0.3 }}
 			>
-				<div className='relative'>
-					<div className='relative w-full h-[220px] overflow-hidden'>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
+				<div className='relative w-full h-[220px] overflow-auto flex'>
+					{property.images && property.images.length > 0 ? (
+						property.images
+							.slice(0, 1)
+							.map((img) => (
+								<img
+									key={img}
+									src={`http://localhost:5000/${img}`}
+									className='w-full h-full object-cover'
+									alt={property.title}
+								/>
+							))
+					) : (
 						<img
-							src={property.image}
-							alt={property.title}
-							className='w-full h-[200px] object-cover'
+							src='/no-image.png'
+							className='w-full h-full object-cover'
+							alt='no image'
 						/>
-					</div>
-
-					<div className='absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300' />
-
-					<div className='absolute bottom-3 left-3 bg-[var(--gold)] text-black px-3 py-1 text-sm font-semibold'>
-						${property.price.toLocaleString()}
-					</div>
+					)}
 				</div>
-				<div className='flex justify-between items-center'>
-					<div className='flex flex-col gap-2 p-4'>
+				<div className='flex justify-between items-center m-2'>
+					{/* LEFT */}
+					<div className='flex flex-col gap-2 p-5'>
 						<h3 className='text-lg font-semibold mb-1 hover:text-[var(--gold)] transition'>
 							{property.title}
 						</h3>
@@ -57,29 +62,60 @@ export const PropertyCard = ({ property }: Props) => {
 						</p>
 					</div>
 
-					<div className='flex flex-col gap-2 p-4'>
-						<Button
-							variant='outline'
-							onClick={(e) => {
-								e.preventDefault();
-								router.push(`/properties/${property.id}/edit`);
-							}}
-						>
-							Edit
-						</Button>
+					{/* RIGHT BUTTONS */}
+					<div className='relative'>
+						<div className='absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 w-[120px]'>
+							{/* EDIT */}
+							<Button
+								variant='outline'
+								className='
+    w-full
+    px-4 py-2
+    border border-gray-600
+    text-white
+    rounded-xl
+    bg-white/5 backdrop-blur-md
+    hover:bg-white hover:text-black
+    hover:scale-105
+    transition-all duration-300
+    shadow-md
+  '
+								onClick={(e) => {
+									e.preventDefault();
+									router.push(
+										`/properties/${property.id}/edit`,
+									);
+								}}
+							>
+								✏️ Edit
+							</Button>
 
-						<Button
-							variant='outline'
-							onClick={(e) => {
-								e.preventDefault();
+							{/* DELETE */}
+							<Button
+								variant='outline'
+								className='
+      w-full
+      px-4 py-2
+      border border-red-500/40
+      text-red-400
+      rounded-xl
+      bg-red-500/10 backdrop-blur-md
+      hover:bg-red-500 hover:text-white
+      hover:scale-105
+      transition-all duration-300
+      shadow-md
+    '
+								onClick={(e) => {
+									e.preventDefault();
 
-								if (confirm('Delete this property?')) {
-									mutation.mutate(property.id);
-								}
-							}}
-						>
-							Delete
-						</Button>
+									if (confirm('Delete this property?')) {
+										mutation.mutate(property.id);
+									}
+								}}
+							>
+								🗑 Delete
+							</Button>
+						</div>
 					</div>
 				</div>
 			</motion.div>

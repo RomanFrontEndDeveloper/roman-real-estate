@@ -11,7 +11,7 @@ export default function CreatePropertyPage() {
 	const [title, setTitle] = useState('');
 	const [price, setPrice] = useState('');
 	const [location, setLocation] = useState('');
-	const [file, setFile] = useState<File | null>(null);
+	const [files, setFiles] = useState<File[]>([]);
 
 	const queryClient = useQueryClient();
 	const router = useRouter();
@@ -27,44 +27,17 @@ export default function CreatePropertyPage() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!title || !price || !location || !file) {
+		if (!title || !price || !location || files.length === 0) {
 			alert('Fill all fields');
 			return;
 		}
 
-		try {
-			// 🔥 1. Upload файла
-			const formData = new FormData();
-			formData.append('image', file);
-
-			const uploadRes = await fetch(
-				'http://localhost:5000/api/properties/upload',
-				{
-					method: 'POST',
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem('token')}`,
-					},
-					body: formData,
-				},
-			);
-
-			if (!uploadRes.ok) {
-				throw new Error('Upload failed');
-			}
-
-			const uploadData = await uploadRes.json();
-
-			// 🔥 2. Створення property
-			mutation.mutate({
-				title,
-				price: Number(price),
-				location,
-				image: uploadData.imageUrl,
-			});
-		} catch (error) {
-			console.error(error);
-			alert('Error creating property');
-		}
+		mutation.mutate({
+			title,
+			price: Number(price),
+			location,
+			images: files, // 🔥 просто передаємо файли
+		});
 	};
 
 	return (
@@ -96,18 +69,57 @@ export default function CreatePropertyPage() {
 						value={location}
 						onChange={(e) => setLocation(e.target.value)}
 					/>
-
+					<label
+						htmlFor='fileInput'
+						className='cursor-pointer bg-amber-900 hover:bg-amber-800 text-white px-6 py-3 rounded-xl transition text-center'
+					>
+						📷 Add photos
+					</label>
 					<input
 						type='file'
-						className='w-[210px] bg-amber-950 p-2'
+						multiple
+						hidden
+						id='fileInput'
 						onChange={(e) => {
 							if (e.target.files) {
-								setFile(e.target.files[0]);
+								setFiles(Array.from(e.target.files));
 							}
 						}}
 					/>
+					<p className='text-[var(--gray)]'> Only 1 - 5 Foto</p>
+					<div className='grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4'>
+						{files.map((file, index) => {
+							const url = URL.createObjectURL(file);
 
-					{file && <p>{file.name}</p>}
+							return (
+								<div
+									key={index}
+									className='relative group w-full h-[90px] sm:h-[100px]'
+								>
+									<img
+										src={url}
+										className='w-full h-full object-cover rounded-lg'
+										alt='preview'
+									/>
+
+									{/* ❌ кнопка видалення */}
+									<button
+										type='button'
+										onClick={() => {
+											setFiles((prev) =>
+												prev.filter(
+													(_, i) => i !== index,
+												),
+											);
+										}}
+										className='absolute top-1 right-1 bg-black/70 text-white text-xs px-2 rounded opacity-0 group-hover:opacity-100 transition'
+									>
+										✕
+									</button>
+								</div>
+							);
+						})}
+					</div>
 
 					<Button type='submit' className='sm:w-[200px] mt-2'>
 						{mutation.isPending ? 'Creating...' : 'Create'}

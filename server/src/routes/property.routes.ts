@@ -5,26 +5,31 @@ import { upload } from '../middleware/upload.middleware';
 
 const router = Router();
 
+router.post(
+	'/',
+	(req, res, next) => {
+		console.log('🔥 START');
+		next();
+	},
+	verifyToken,
+	upload.array('images', 5),
+	(req, res, next) => {
+		console.log('🔥 AFTER UPLOAD');
+		next();
+	},
+	controller.createProperty,
+);
+
 router.get('/', controller.getProperties);
 router.get('/my', verifyToken, controller.getMyProperties);
 router.get('/:id', controller.getPropertyById);
 
-// 🔐 захищені
-router.post('/', verifyToken, controller.createProperty);
-router.patch('/:id', verifyToken, controller.updateProperty);
+router.patch(
+	'/:id',
+	verifyToken,
+	upload.array('images', 5), // 🔥 ОБОВʼЯЗКОВО
+	controller.updateProperty,
+);
 router.delete('/:id', verifyToken, controller.deleteProperty);
-router.post('/upload', verifyToken, upload.single('image'), (req, res) => {
-	const file = req.file;
-
-	if (!file) {
-		return res.status(400).json({ message: 'No file' });
-	}
-
-	res.json({
-		imageUrl: `http://localhost:5000/uploads/${file.filename}`,
-	});
-});
 
 export default router;
-
-//Middleware — це функція, яка виконується МІЖ запитом і відповіддю

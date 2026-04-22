@@ -10,10 +10,9 @@ import { Button } from '@/shared/ui/Button';
 
 export default function EditPropertyPage() {
 	const { id } = useParams();
-	const router = useRouter(); //керування переходами між сторінками
-	const queryClient = useQueryClient(); //дає тобі доступ до глобального кешу запитів.(менеджер кешу даних)
+	const router = useRouter();
+	const queryClient = useQueryClient();
 
-	//Завантаж property по id і збережи результат у data
 	const { data } = useQuery({
 		queryKey: ['property', id],
 		queryFn: () => getPropertyById(id as string),
@@ -22,42 +21,42 @@ export default function EditPropertyPage() {
 	const [title, setTitle] = useState('');
 	const [price, setPrice] = useState('');
 	const [location, setLocation] = useState('');
-	const [image, setImage] = useState('');
 
-	// 🔥 заповнюємо форму
+	const [files, setFiles] = useState<File[]>([]); // нові фото
+	const [existingImages, setExistingImages] = useState<string[]>([]); // старі фото
+
+	// 🔥 заповнення форми
 	useEffect(() => {
 		if (data) {
 			setTitle(data.title);
 			setPrice(String(data.price));
 			setLocation(data.location);
-			setImage(data.image);
+			setExistingImages(data.images || []);
 		}
 	}, [data]);
 
-	//логіка оновлення даних (PATCH) через TanStack Query
 	const mutation = useMutation({
-		mutationFn: updateProperty, //функція, яка реально робить запит updateProperty({ id, data })
+		mutationFn: updateProperty,
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['properties'] }); //Список properties застарів — перезавантаж його
-			router.push('/my-properties');
+			queryClient.invalidateQueries({ queryKey: ['properties'] });
+			router.push('/properties');
 		},
 	});
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
+		console.log('FILES:', files);
 		mutation.mutate({
 			id: id as string,
 			data: {
 				title,
 				price: Number(price),
 				location,
-				image,
+				existingImages, // що залишили
+				newImages: files, // що додали
 			},
 		});
 	};
-
-	//TanStack Query = “бібліотека - розумний fetch + кеш + автоматичні оновлення”
 
 	return (
 		<section className='flex justify-center mt-10 px-4'>
@@ -74,21 +73,129 @@ export default function EditPropertyPage() {
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
 					/>
+
 					<Input
 						type='number'
 						value={price}
 						onChange={(e) => setPrice(e.target.value)}
 					/>
+
 					<Input
 						value={location}
 						onChange={(e) => setLocation(e.target.value)}
 					/>
-					<Input
-						value={image}
-						onChange={(e) => setImage(e.target.value)}
+
+					{/* 📷 КНОПКА */}
+					<label
+						htmlFor='fileInput'
+						className='cursor-pointer bg-amber-900 hover:bg-amber-800 text-white px-6 py-3 rounded-xl transition text-center'
+					>
+						📷 Add photos
+					</label>
+
+					<input
+						type='file'
+						multiple
+						id='fileInput'
+						className='hidden'
+						onChange={(e) => {
+							console.log('CHANGE TRIGGERED');
+							if (e.target.files) {
+								const arr = Array.from(e.target.files);
+								console.log('SELECTED FILES:', arr);
+								setFiles((prev) => [
+									...prev,
+									...Array.from(e.target.files!),
+								]);
+							}
+						}}
 					/>
 
-					<Button type='submit' className='sm:w-[200px] w-full'>
+					<p className='text-gray-400 text-sm text-center bg-gray-950 rounded-xl p-3'>
+						You can add new photos <br /> or remove old ones <br />
+						(all 1 - 5 Foto)
+					</p>
+
+					{/* 🔥 СТАРІ ФОТО */}
+					{existingImages.length > 0 && (
+						<div className='w-full'>
+							<p className='text-sm text-gray-400 mb-2'>
+								Current photos
+							</p>
+
+							<div className='grid grid-cols-3 sm:grid-cols-4 gap-3'>
+								{existingImages.map((img, index) => (
+									<div
+										key={index}
+										className='relative group h-[90px]'
+									>
+										<img
+											src={`http://localhost:5000/${img}`}
+											className='w-full h-full object-cover rounded-lg'
+										/>
+
+										<button
+											type='button'
+											onClick={() => {
+												setExistingImages((prev) =>
+													prev.filter(
+														(_, i) => i !== index,
+													),
+												);
+											}}
+											className='absolute top-1 right-1 bg-black/70 text-white text-xs px-2 rounded opacity-0 group-hover:opacity-100 transition'
+										>
+											✕
+										</button>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+
+					{/* 🔥 НОВІ ФОТО */}
+					{files.length > 0 && (
+						<div className='w-full'>
+							<p className='text-sm text-gray-400 mb-2'>
+								New photos
+							</p>
+
+							<div className='grid grid-cols-3 sm:grid-cols-4 gap-3'>
+								{files.map((file, index) => {
+									const url = URL.createObjectURL(file);
+
+									return (
+										<div
+											key={index}
+											className='relative group h-[90px]'
+										>
+											<img
+												src={url}
+												className='w-full h-full object-cover rounded-lg'
+											/>
+
+											<button
+												type='button'
+												onClick={() => {
+													setFiles((prev) =>
+														prev.filter(
+															(_, i) =>
+																i !== index,
+														),
+													);
+												}}
+												className='absolute top-1 right-1 bg-black/70 text-white text-xs px-2 rounded opacity-0 group-hover:opacity-100 transition'
+											>
+												✕
+											</button>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+					)}
+
+					<Button type='submit' className='sm:w-[200px] mt-4'>
 						{mutation.isPending ? 'Saving...' : 'Save'}
 					</Button>
 				</form>

@@ -129,7 +129,7 @@ export default function PropertiesPage() {
 				/>
 			</div>
 
-			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
+			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{filteredProperties?.length === 0 ? (
 					<motion.div
 						className='col-span-full text-center rounded-2xl text-gray-400 py-10 shadow-[0_0_20px_rgba(201,169,110,0.4)]'
