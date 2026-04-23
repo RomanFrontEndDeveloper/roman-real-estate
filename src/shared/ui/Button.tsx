@@ -4,13 +4,16 @@ type ButtonProps = {
 	type?: 'button' | 'submit';
 	variant?: 'primary' | 'outline';
 	className?: string;
+	disabled?: boolean; // 🔥 додали
 };
 
 export const Button = ({
 	children,
 	onClick,
+	type = 'button', // 🔥 дефолт
 	variant = 'primary',
 	className = '',
+	disabled = false, // 🔥 дефолт
 }: ButtonProps) => {
 	const base =
 		'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 active:scale-95';
@@ -24,8 +27,12 @@ export const Button = ({
 
 	return (
 		<button
+			type={type} // 🔥 тепер працює submit
 			onClick={onClick}
-			className={`${base} ${styles[variant]} ${className}`}
+			disabled={disabled} // 🔥 ключове
+			className={`${base} ${styles[variant]} ${className} ${
+				disabled ? 'opacity-40 cursor-not-allowed' : ''
+			}`}
 		>
 			{children}
 		</button>

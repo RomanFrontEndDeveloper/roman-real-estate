@@ -14,7 +14,7 @@ export default function PropertyPage() {
 		queryFn: () => getPropertyById(id as string),
 	});
 
-	if (isLoading) {
+	if (isLoading && !property) {
 		return <div className='text-white pt-6 ml-2'>Loading...</div>;
 	}
 

@@ -79,7 +79,7 @@ export default function PropertiesPage() {
 	const text = 'No properties found';
 
 	// loading
-	if (isLoading) {
+	if (isLoading && !data) {
 		return (
 			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
 				{Array.from({ length: 6 }).map((_, i) => (
@@ -141,6 +141,7 @@ export default function PropertiesPage() {
 
 				<Button
 					variant='outline'
+					disabled={isFetching} // 👈 ДОДАЙ
 					onClick={() => setShowFavorites((prev) => !prev)}
 					className={showFavorites ? 'bg-amber-950 text-black' : ''}
 				>
@@ -189,7 +190,7 @@ export default function PropertiesPage() {
 					<Button
 						variant='outline'
 						onClick={() => setPage((p) => Math.max(p - 1, 1))}
-						disabled={page === 1}
+						disabled={page === 1 || isFetching}
 						className={`px-4 ${
 							page === 1
 								? 'opacity-30 cursor-not-allowed'
@@ -212,7 +213,7 @@ export default function PropertiesPage() {
 						onClick={() =>
 							setPage((p) => (data && p < data.pages ? p + 1 : p))
 						}
-						disabled={page === data?.pages}
+						disabled={page === data?.pages || isFetching}
 						className={`px-4 ${
 							page === data?.pages
 								? 'opacity-30 cursor-not-allowed'
@@ -226,7 +227,9 @@ export default function PropertiesPage() {
 
 			{/* loading indicator */}
 			{isFetching && (
-				<p className='text-center text-gray-400 mt-4'>Loading...</p>
+				<p className='text-center text-[var(--gold)] mt-4 animate-pulse'>
+					Updating...
+				</p>
 			)}
 		</section>
 	);

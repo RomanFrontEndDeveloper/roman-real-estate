@@ -10,7 +10,7 @@ export default function MyPropertiesPage() {
 		queryFn: getMyProperties,
 	});
 
-	if (isLoading) return <p>Loading...</p>;
+	if (isLoading && !data) return <p>Loading...</p>;
 	if (error) return <p>Error loading properties</p>;
 
 	return (
