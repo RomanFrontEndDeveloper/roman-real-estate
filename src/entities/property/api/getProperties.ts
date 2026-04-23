@@ -1,14 +1,12 @@
 export const getProperties = async (
 	page = 1,
-	filters?: {
-		city?: string;
-		maxPrice?: string;
-	},
+	filters?,
+	limit = 6, // 👈 додали
 ) => {
 	const params = new URLSearchParams();
 
 	params.append('page', String(page));
-	params.append('limit', '3');
+	params.append('limit', String(limit)); // 👈 ось тут
 
 	if (filters?.city) params.append('city', filters.city);
 	if (filters?.maxPrice) params.append('maxPrice', filters.maxPrice);
@@ -23,7 +21,6 @@ export const getProperties = async (
 
 	const data = await res.json();
 
-	// 🔥 трансформуємо тільки data.data
 	return {
 		...data,
 		data: data.data.map((item: any) => ({

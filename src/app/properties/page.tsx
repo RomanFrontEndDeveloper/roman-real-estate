@@ -3,25 +3,34 @@
 import { useQuery } from '@tanstack/react-query';
 import { getProperties } from '@/entities/property/api/getProperties';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { PropertyCardSkeleton } from '@/entities/property/ui/PropertyCardSkeleton';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { getMe } from '@/entities/user/api/getMe';
 
 export default function PropertiesPage() {
 	const router = useRouter();
 
-	// input state (для UI)
+	// UI state
 	const [inputCity, setInputCity] = useState('');
 	const [inputMaxPrice, setInputMaxPrice] = useState('');
 
-	// debounce state (для API)
+	// API state
 	const [city, setCity] = useState('');
 	const [maxPrice, setMaxPrice] = useState('');
 	const [page, setPage] = useState(1);
+
+	const [showFavorites, setShowFavorites] = useState(false);
+
+	const { data: user } = useQuery({
+		queryKey: ['me'],
+		queryFn: getMe,
+		retry: false,
+	});
 
 	// debounce
 	useEffect(() => {
@@ -33,7 +42,7 @@ export default function PropertiesPage() {
 		return () => clearTimeout(timeout);
 	}, [inputCity, inputMaxPrice]);
 
-	// reset page при зміні фільтрів
+	// reset page
 	useEffect(() => {
 		setPage(1);
 	}, [city, maxPrice]);
@@ -44,18 +53,32 @@ export default function PropertiesPage() {
 
 	// fetch
 	const { data, isLoading, isFetching, error } = useQuery({
-		queryKey: ['properties', page, city, maxPrice],
+		queryKey: ['properties', page, city, maxPrice, showFavorites], // 👈 додали
 		queryFn: () =>
-			getProperties(page, {
-				city,
-				maxPrice,
-			}),
+			getProperties(
+				showFavorites ? 1 : page, // 👈 якщо favorites → завжди 1 сторінка
+				{
+					city,
+					maxPrice,
+				},
+				showFavorites ? 1000 : 3, // 👈 головне
+			),
 		placeholderData: (prev) => prev,
 	});
 
+	// 🔥 FILTER FAVORITES (ГОЛОВНЕ)
+	const displayedProperties = useMemo(() => {
+		if (!data?.data) return [];
+
+		if (!showFavorites) return data.data;
+
+		// 🔥 показуємо ВСІ favorites (без pagination)
+		return data.data.filter((p) => user?.favorites?.includes(p.id));
+	}, [data, showFavorites, user]);
+
 	const text = 'No properties found';
 
-	// loading skeleton
+	// loading
 	if (isLoading) {
 		return (
 			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
@@ -90,7 +113,7 @@ export default function PropertiesPage() {
 			</h1>
 
 			{/* КНОПКИ */}
-			<div className='flex gap-3 mb-5'>
+			<div className='flex gap-3 mb-5 flex-wrap'>
 				<Link href='/my-properties'>
 					<Button variant='outline'>My Properties</Button>
 				</Link>
@@ -110,9 +133,18 @@ export default function PropertiesPage() {
 						setCity('');
 						setMaxPrice('');
 						setPage(1);
+						setShowFavorites(false);
 					}}
 				>
 					Reset
+				</Button>
+
+				<Button
+					variant='outline'
+					onClick={() => setShowFavorites((prev) => !prev)}
+					className={showFavorites ? 'bg-amber-950 text-black' : ''}
+				>
+					{showFavorites ? 'Show All' : 'Favorites ❤️'}
 				</Button>
 			</div>
 
@@ -134,12 +166,12 @@ export default function PropertiesPage() {
 
 			{/* СПИСОК */}
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-				{data?.data?.length === 0 ? (
+				{displayedProperties.length === 0 ? (
 					<motion.div className='col-span-full text-center text-gray-400 py-10'>
-						{text}
+						{showFavorites ? 'No favorite properties yet' : text}
 					</motion.div>
 				) : (
-					data?.data.map((property) => (
+					displayedProperties.map((property) => (
 						<motion.div
 							key={property.id}
 							initial={{ opacity: 0, y: 20 }}
@@ -152,48 +184,47 @@ export default function PropertiesPage() {
 			</div>
 
 			{/* PAGINATION */}
-			<div className='flex justify-center items-center gap-4 mt-8'>
-				{/* Prev */}
-				<Button
-					variant='outline'
-					onClick={() => setPage((p) => Math.max(p - 1, 1))}
-					disabled={page === 1}
-					className={`px-4 ${
-						page === 1
-							? 'opacity-30 cursor-not-allowed'
-							: 'hover:bg-white/10'
-					}`}
-				>
-					← Prev
-				</Button>
+			{!showFavorites && (
+				<div className='flex justify-center items-center gap-4 mt-8'>
+					<Button
+						variant='outline'
+						onClick={() => setPage((p) => Math.max(p - 1, 1))}
+						disabled={page === 1}
+						className={`px-4 ${
+							page === 1
+								? 'opacity-30 cursor-not-allowed'
+								: 'hover:bg-white/10'
+						}`}
+					>
+						← Prev
+					</Button>
 
-				{/* Page info */}
-				<span className='text-sm text-gray-400'>
-					Page{' '}
-					<span className='font-semibold text-white'>
-						{data?.page}
-					</span>{' '}
-					of <span className='text-gray-300'>{data?.pages}</span>
-				</span>
+					<span className='text-sm text-gray-400'>
+						Page{' '}
+						<span className='font-semibold text-white'>
+							{data?.page}
+						</span>{' '}
+						of <span className='text-gray-300'>{data?.pages}</span>
+					</span>
 
-				{/* Next */}
-				<Button
-					variant='outline'
-					onClick={() =>
-						setPage((p) => (data && p < data.pages ? p + 1 : p))
-					}
-					disabled={page === data?.pages}
-					className={`px-4 ${
-						page === data?.pages
-							? 'opacity-30 cursor-not-allowed'
-							: 'hover:bg-white/10'
-					}`}
-				>
-					Next →
-				</Button>
-			</div>
+					<Button
+						variant='outline'
+						onClick={() =>
+							setPage((p) => (data && p < data.pages ? p + 1 : p))
+						}
+						disabled={page === data?.pages}
+						className={`px-4 ${
+							page === data?.pages
+								? 'opacity-30 cursor-not-allowed'
+								: 'hover:bg-white/10'
+						}`}
+					>
+						Next →
+					</Button>
+				</div>
+			)}
 
-			{/* subtle loading indicator */}
+			{/* loading indicator */}
 			{isFetching && (
 				<p className='text-center text-gray-400 mt-4'>Loading...</p>
 			)}

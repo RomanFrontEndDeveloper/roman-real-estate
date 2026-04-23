@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
 			enum: ['admin', 'agent'],
 			default: 'agent',
 		},
+		favorites: [
+			{
+				type: String,
+			},
+		],
 	},
 	{ timestamps: true },
 );

@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { Property } from '@/entities/property/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteProperty } from '@/entities/property/api/deleteProperty';
+import { toggleFavorite } from '@/entities/user/api/toggleFavorite';
+import { getMe } from '@/entities/user/api/getMe';
 import { Button } from '@/shared/ui/Button';
 import { useRouter } from 'next/navigation';
 
@@ -15,12 +16,30 @@ type Props = {
 
 export const PropertyCard = ({ property }: Props) => {
 	const router = useRouter();
-
 	const queryClient = useQueryClient();
-	const mutation = useMutation({
+
+	// 🔥 отримуємо юзера
+	const { data: user } = useQuery({
+		queryKey: ['me'],
+		queryFn: getMe,
+	});
+
+	// ❤️ чи в favorites
+	const isFavorite = user?.favorites?.includes(property.id);
+
+	// 🗑 delete
+	const deleteMutation = useMutation({
 		mutationFn: deleteProperty,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['properties'] });
+		},
+	});
+
+	// ❤️ toggle
+	const favoriteMutation = useMutation({
+		mutationFn: toggleFavorite,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['me'] });
 		},
 	});
 
@@ -31,6 +50,7 @@ export const PropertyCard = ({ property }: Props) => {
 				whileHover={{ scale: 1.04, y: -5 }}
 				transition={{ duration: 0.3 }}
 			>
+				{/* IMAGE */}
 				<div className='relative w-full h-[220px] overflow-hidden'>
 					{property.images && property.images.length > 0 ? (
 						<img
@@ -45,13 +65,27 @@ export const PropertyCard = ({ property }: Props) => {
 							alt='no image'
 						/>
 					)}
+
+					{/* ❤️ FAVORITE */}
+					<Button
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation(); // 🔥 ОЦЕ ДОДАЙ
+							favoriteMutation.mutate(property.id);
+						}}
+						className='absolute top-3 right-3 bg-black/60 backdrop-blur px-2 py-1 rounded-lg'
+					>
+						{isFavorite ? '❤️' : '🤍'}
+					</Button>
 				</div>
+
 				<div className='flex justify-between items-center m-2'>
 					{/* LEFT */}
 					<div className='flex flex-col gap-2 p-5'>
 						<h3 className='text-lg font-semibold mb-1 hover:text-[var(--gold)] transition'>
 							{property.title}
 						</h3>
+
 						<p className='text-[var(--gold)] font-semibold text-lg'>
 							${property.price}
 						</p>
@@ -68,17 +102,10 @@ export const PropertyCard = ({ property }: Props) => {
 							<Button
 								variant='outline'
 								className='
-    w-full
-    px-4 py-2
-    border border-gray-600
-    text-white
-    rounded-xl
-    bg-white/5 backdrop-blur-md
-    hover:bg-white hover:text-black
-    hover:scale-105
-    transition-all duration-300
-    shadow-md
-  '
+									w-full px-4 py-2 border border-gray-600 text-white rounded-xl
+									bg-white/5 backdrop-blur-md hover:bg-white hover:text-black
+									hover:scale-105 transition-all duration-300 shadow-md
+								'
 								onClick={(e) => {
 									e.preventDefault();
 									router.push(
@@ -93,22 +120,15 @@ export const PropertyCard = ({ property }: Props) => {
 							<Button
 								variant='outline'
 								className='
-      w-full
-      px-4 py-2
-      border border-red-500/40
-      text-red-400
-      rounded-xl
-      bg-red-500/10 backdrop-blur-md
-      hover:bg-red-500 hover:text-white
-      hover:scale-105
-      transition-all duration-300
-      shadow-md
-    '
+									w-full px-4 py-2 border border-red-500/40 text-red-400 rounded-xl
+									bg-red-500/10 backdrop-blur-md hover:bg-red-500 hover:text-white
+									hover:scale-105 transition-all duration-300 shadow-md
+								'
 								onClick={(e) => {
 									e.preventDefault();
 
 									if (confirm('Delete this property?')) {
-										mutation.mutate(property.id);
+										deleteMutation.mutate(property.id);
 									}
 								}}
 							>

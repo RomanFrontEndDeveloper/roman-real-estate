@@ -3,6 +3,7 @@ import cors from 'cors'; //CORS:Дозволяє фронтенду (напр. R
 import propertyRoutes from './routes/property.routes'; //Підключаєш свої маршрути (routes)
 import authRoutes from './routes/auth.routes';
 import path from 'path';
+import userRoutes from './routes/user.routes';
 
 export const app = express();
 
@@ -10,6 +11,8 @@ app.use(cors()); //дозволяє фронтенду звертатись до
 app.use(express.json()); //middleware, який парсить JSON.
 app.use('/api/properties', propertyRoutes); //підключення роутів для нерухомості.
 app.use('/api/auth', authRoutes); //підключення роутів для авторизації
+app.use('/api/users', userRoutes);
+
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/uploads', express.static('uploads'));
 
