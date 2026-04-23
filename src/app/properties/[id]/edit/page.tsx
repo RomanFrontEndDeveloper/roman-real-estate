@@ -126,7 +126,7 @@ export default function EditPropertyPage() {
 							<div className='grid grid-cols-3 sm:grid-cols-4 gap-3'>
 								{existingImages.map((img, index) => (
 									<div
-										key={index}
+										key={img + index}
 										className='relative group h-[90px]'
 									>
 										<img
@@ -166,12 +166,13 @@ export default function EditPropertyPage() {
 
 									return (
 										<div
-											key={index}
-											className='relative group h-[90px]'
+											key={file.name + file.lastModified}
+											className='relative group w-full h-[90px] sm:h-[100px]'
 										>
 											<img
 												src={url}
 												className='w-full h-full object-cover rounded-lg'
+												alt='preview'
 											/>
 
 											<button

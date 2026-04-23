@@ -15,7 +15,7 @@ export const createProperty = async (data: {
 	data.images.forEach((file) => {
 		formData.append('images', file); // 🔥 головне
 	});
-	console.log('🚀 SENDING REQUEST');
+
 	const res = await fetch('http://127.0.0.1:5000/api/properties', {
 		method: 'POST',
 		headers: {

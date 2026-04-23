@@ -1,8 +1,8 @@
 import { PropertyModel } from '../models/property.model';
 
 //повертає всі об'єкти з бази
-export const getAll = async () => {
-	return PropertyModel.find();
+export const getAll = (filter: any) => {
+	return PropertyModel.find(filter);
 };
 
 //шукає один документ по ID

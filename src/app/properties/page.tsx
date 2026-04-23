@@ -3,41 +3,63 @@
 import { useQuery } from '@tanstack/react-query';
 import { getProperties } from '@/entities/property/api/getProperties';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { PropertyCardSkeleton } from '@/entities/property/ui/PropertyCardSkeleton';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
-import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function PropertiesPage() {
+	const router = useRouter();
+
+	// 🔥 тільки input state
+	const [inputCity, setInputCity] = useState('');
+	const [inputMaxPrice, setInputMaxPrice] = useState('');
+
+	// 🔥 debounce state (для запиту)
 	const [city, setCity] = useState('');
 	const [maxPrice, setMaxPrice] = useState('');
 
-	const router = useRouter();
+	// ⏳ debounce (ОДИН!)
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setCity(inputCity);
+			setMaxPrice(inputMaxPrice);
+		}, 500);
 
-	const { data, isLoading, error, refetch } = useQuery({
-		queryKey: ['properties'],
-		queryFn: getProperties,
+		return () => clearTimeout(timeout);
+	}, [inputCity, inputMaxPrice]);
+
+	// 🚀 запит
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['properties', city, maxPrice],
+		queryFn: () =>
+			getProperties({
+				city,
+				maxPrice,
+			}),
+		placeholderData: (prev) => prev,
 	});
 
+	// 🔥 фільтр
 	const filteredProperties = useMemo(() => {
 		return data?.filter((property) => {
 			const matchCity = property.location
 				.toLowerCase()
-				.includes(city.trim().toLowerCase());
+				.includes(inputCity.trim().toLowerCase());
 
 			const matchPrice =
-				maxPrice === '' || property.price <= Number(maxPrice);
+				inputMaxPrice === '' || property.price <= Number(inputMaxPrice);
 
 			return matchCity && matchPrice;
 		});
-	}, [data, city, maxPrice]);
+	}, [data, inputCity, inputMaxPrice]);
 
 	const text = 'No properties found';
 
+	// ⏳ loading
 	if (isLoading) {
 		return (
 			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
@@ -48,34 +70,19 @@ export default function PropertiesPage() {
 		);
 	}
 
+	// ❌ error
 	if (error) {
 		return (
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
-				className='flex flex-col items-center justify-center text-center mt-25 mb-25'
+				className='flex flex-col items-center justify-center text-center mt-20'
 			>
 				<h2 className='text-2xl font-semibold text-red-500 mb-2'>
 					Something went wrong
 				</h2>
 
-				<p className='text-gray-400 mb-6'>
-					Failed to load properties. Please try again.
-				</p>
-
-				<button
-					onClick={() => refetch()}
-					className='
-          px-6 py-2
-          rounded-lg
-          bg-[var(--gold)]
-          transition-all duration-300
-          hover:shadow-[0_0_12px_rgba(201,169,110,0.6)]
-          active:scale-95
-        '
-				>
-					Retry
-				</button>
+				<p className='text-gray-400 mb-6'>Failed to load properties</p>
 			</motion.div>
 		);
 	}
@@ -85,81 +92,59 @@ export default function PropertiesPage() {
 			<h1 className='text-3xl font-bold text-[var(--gold)] mb-6 mt-4 ml-3'>
 				Properties
 			</h1>
-			<Link href='/my-properties'>
-				<Button variant='outline' className='mb-5 w-35 mr-5'>
-					My Properties
-				</Button>
-			</Link>
-			<div className='flex'>
+
+			{/* КНОПКИ */}
+			<div className='flex gap-3 mb-5'>
+				<Link href='/my-properties'>
+					<Button variant='outline'>My Properties</Button>
+				</Link>
+
 				<Button
 					variant='outline'
 					onClick={() => router.push('/properties/create')}
-					className='mb-5 w-35'
 				>
 					+ Add Property
 				</Button>
-			</div>
-			<div className='flex'>
+
 				<Button
 					variant='outline'
 					onClick={() => {
-						setCity('');
-						setMaxPrice('');
+						setInputCity('');
+						setInputMaxPrice('');
 					}}
-					className='mb-5 w-35'
 				>
-					Reset Filtres
+					Reset
 				</Button>
 			</div>
 
-			<div className='flex items-center flex-col sm:flex-row gap-4 mb-6'>
-				{/* CITY */}
+			{/* ФІЛЬТРИ */}
+			<div className='flex flex-col sm:flex-row gap-4 mb-6'>
 				<Input
-					placeholder='City (Kyiv, Lviv...)'
-					value={city}
-					onChange={(e) => setCity(e.target.value)}
+					placeholder='Сity ​​District'
+					value={inputCity}
+					onChange={(e) => setInputCity(e.target.value)}
 				/>
 
-				{/* PRICE */}
 				<Input
 					type='number'
 					placeholder='Max price'
-					value={maxPrice}
-					onChange={(e) => setMaxPrice(e.target.value)}
+					value={inputMaxPrice}
+					onChange={(e) => setInputMaxPrice(e.target.value)}
 				/>
 			</div>
 
+			{/* СПИСОК */}
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{filteredProperties?.length === 0 ? (
-					<motion.div
-						className='col-span-full text-center rounded-2xl text-gray-400 py-10 shadow-[0_0_20px_rgba(201,169,110,0.4)]'
-						initial='hidden'
-						animate='visible'
-					>
-						{text.split('').map((char, index) => (
-							<motion.span
-								className='text-2xl	'
-								key={index}
-								variants={{
-									hidden: { opacity: 0 },
-									visible: { opacity: 1 },
-								}}
-								transition={{
-									delay: index * 0.15,
-								}}
-							>
-								{char}
-							</motion.span>
-						))}
+					<motion.div className='col-span-full text-center text-gray-400 py-10'>
+						{text}
 					</motion.div>
 				) : (
 					filteredProperties?.map((property) => (
 						<motion.div
 							key={property.id}
-							variants={{
-								hidden: { opacity: 0, y: 30 },
-								visible: { opacity: 1, y: 0 },
-							}}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
 						>
 							<PropertyCard property={property} />
 						</motion.div>

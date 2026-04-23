@@ -28,9 +28,9 @@ export default function PropertyPage() {
 			<div className='w-full mb-6'>
 				<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
 					{property.images?.length > 0 ? (
-						property.images.map((img, index) => (
+						property.images.map((img) => (
 							<img
-								key={index}
+								key={img}
 								src={`http://localhost:5000/${img}`}
 								className='w-full h-[220px] sm:h-[200px] md:h-[180px] object-cover rounded'
 								alt={property.title}
@@ -106,7 +106,7 @@ export default function PropertyPage() {
 							e.preventDefault();
 
 							if (confirm('Delete this property?')) {
-								mutation.mutate(property.id);
+								mutation.mutate(property.id || property._id);
 							}
 						}}
 					>

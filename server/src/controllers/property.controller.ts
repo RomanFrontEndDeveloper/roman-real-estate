@@ -1,23 +1,42 @@
-import { Response } from 'express';
+import { Response, RequestHandler } from 'express';
 import { PropertyModel } from '../models/property.model';
-import * as service from '../services/property.service';
 import { AuthRequest } from '../middleware/auth.middleware';
 
 // 📥 Отримати всі
-export const getProperties = async (req: AuthRequest, res: Response) => {
+
+export const getProperties: RequestHandler = async (req, res) => {
 	try {
-		const properties = await service.getAll();
+		const { city, maxPrice } = req.query;
+
+		const filter: any = {};
+
+		if (city) {
+			filter.location = {
+				$regex: city,
+				$options: 'i',
+			};
+		}
+
+		if (maxPrice) {
+			filter.price = { $lte: Number(maxPrice) };
+		}
+
+		const properties = await PropertyModel.find(filter);
+
 		res.json(properties);
 	} catch (error) {
-		console.error('GET PROPERTIES ERROR:', error);
 		res.status(500).json({ message: 'Server error' });
 	}
 };
-
 // 📥 Отримати один
-export const getPropertyById = async (req: AuthRequest, res: Response) => {
+
+export const getPropertyById: RequestHandler = async (req, res) => {
 	try {
-		const property = await service.getById(req.params.id as string);
+		if (!req.params.id || req.params.id === 'undefined') {
+			return res.status(400).json({ message: 'Invalid ID' });
+		}
+
+		const property = await PropertyModel.findById(req.params.id);
 
 		if (!property) {
 			return res.status(404).json({ message: 'Not found' });
@@ -25,7 +44,7 @@ export const getPropertyById = async (req: AuthRequest, res: Response) => {
 
 		res.json(property);
 	} catch (error) {
-		console.error('GET BY ID ERROR:', error);
+		console.log('GET BY ID ERROR:', error);
 		res.status(500).json({ message: 'Server error' });
 	}
 };

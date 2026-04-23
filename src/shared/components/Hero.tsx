@@ -45,7 +45,7 @@ export const Hero = () => {
 					>
 						{title.split(' ').map((word, index) => (
 							<motion.span
-								key={index}
+								key={word + index}
 								initial={{ opacity: 0, y: 10 }}
 								animate={{ opacity: 1, y: 0 }}
 								transition={{

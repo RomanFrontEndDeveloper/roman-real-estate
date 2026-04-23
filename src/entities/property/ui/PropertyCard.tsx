@@ -15,6 +15,7 @@ type Props = {
 
 export const PropertyCard = ({ property }: Props) => {
 	const router = useRouter();
+
 	const queryClient = useQueryClient();
 	const mutation = useMutation({
 		mutationFn: deleteProperty,
@@ -30,18 +31,13 @@ export const PropertyCard = ({ property }: Props) => {
 				whileHover={{ scale: 1.04, y: -5 }}
 				transition={{ duration: 0.3 }}
 			>
-				<div className='relative w-full h-[220px] overflow-auto flex'>
+				<div className='relative w-full h-[220px] overflow-hidden'>
 					{property.images && property.images.length > 0 ? (
-						property.images
-							.slice(0, 1)
-							.map((img) => (
-								<img
-									key={img}
-									src={`http://localhost:5000/${img}`}
-									className='w-full h-full object-cover'
-									alt={property.title}
-								/>
-							))
+						<img
+							src={`http://localhost:5000/${property.images[0]}`}
+							className='w-full h-full object-cover'
+							alt={property.title}
+						/>
 					) : (
 						<img
 							src='/no-image.png'
@@ -56,6 +52,9 @@ export const PropertyCard = ({ property }: Props) => {
 						<h3 className='text-lg font-semibold mb-1 hover:text-[var(--gold)] transition'>
 							{property.title}
 						</h3>
+						<p className='text-[var(--gold)] font-semibold text-lg'>
+							${property.price}
+						</p>
 
 						<p className='text-gray-400 text-sm'>
 							{property.location}

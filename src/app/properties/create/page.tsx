@@ -93,7 +93,7 @@ export default function CreatePropertyPage() {
 
 							return (
 								<div
-									key={index}
+									key={file.name + file.lastModified}
 									className='relative group w-full h-[90px] sm:h-[100px]'
 								>
 									<img
@@ -102,7 +102,6 @@ export default function CreatePropertyPage() {
 										alt='preview'
 									/>
 
-									{/* ❌ кнопка видалення */}
 									<button
 										type='button'
 										onClick={() => {

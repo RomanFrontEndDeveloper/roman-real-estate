@@ -1,15 +1,15 @@
 export const getPropertyById = async (id: string) => {
-	const res = await fetch(`http://localhost:5000/api/properties/${id}`, {
-		cache: 'no-store',
-	});
+	const res = await fetch(`http://localhost:5000/api/properties/${id}`);
 
 	if (!res.ok) {
-		return null;
+		throw new Error('Failed to fetch property');
 	}
-	const item = await res.json();
 
+	const data = await res.json();
+
+	// 🔥 ВАЖЛИВО
 	return {
-		...item,
-		id: item._id, //Візьми об’єкт і додай до нього нормальне поле id замість _id
+		...data,
+		id: data._id,
 	};
 };
