@@ -1,35 +1,55 @@
-import { Response, RequestHandler } from 'express';
+import { Response, Request, RequestHandler } from 'express';
 import { PropertyModel } from '../models/property.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 
-// 📥 Отримати всі
-
-export const getProperties: RequestHandler = async (req, res) => {
+// 📥 Отримати всі (pagination + filters)
+export const getProperties: RequestHandler = async (
+	req: Request,
+	res: Response,
+) => {
 	try {
-		const { city, maxPrice } = req.query;
+		const page = parseInt(req.query.page as string) || 1;
+		const limit = parseInt(req.query.limit as string) || 3;
+
+		const skip = (page - 1) * limit;
 
 		const filter: any = {};
 
-		if (city) {
+		// 🔍 фільтр по місту
+		if (req.query.city && req.query.city !== '') {
 			filter.location = {
-				$regex: city,
+				$regex: req.query.city,
 				$options: 'i',
 			};
 		}
 
-		if (maxPrice) {
-			filter.price = { $lte: Number(maxPrice) };
+		// 💰 фільтр по ціні
+		if (req.query.maxPrice && req.query.maxPrice !== '') {
+			filter.price = {
+				$lte: Number(req.query.maxPrice),
+			};
 		}
 
-		const properties = await PropertyModel.find(filter);
+		const total = await PropertyModel.countDocuments(filter);
 
-		res.json(properties);
+		const properties = await PropertyModel.find(filter)
+			.skip(skip)
+			.limit(limit)
+			.sort({ createdAt: -1 });
+
+		res.json({
+			data: properties,
+			total,
+			page,
+			pages: Math.ceil(total / limit),
+		});
 	} catch (error) {
+		console.error('GET PROPERTIES ERROR:', error);
 		res.status(500).json({ message: 'Server error' });
 	}
 };
-// 📥 Отримати один
 
+// 📥 Отримати один
 export const getPropertyById: RequestHandler = async (req, res) => {
 	try {
 		if (!req.params.id || req.params.id === 'undefined') {
@@ -103,14 +123,12 @@ export const updateProperty = async (req: AuthRequest, res: Response) => {
 
 		const files = req.files as Express.Multer.File[];
 
-		// 🔥 старі фото
 		const existingImages = Array.isArray(req.body.existingImages)
 			? req.body.existingImages
 			: req.body.existingImages
 				? [req.body.existingImages]
 				: [];
 
-		// 🔥 нові фото
 		const newImages = files?.map((file) => file.path) || [];
 
 		const updatedImages = [...existingImages, ...newImages];
@@ -121,7 +139,6 @@ export const updateProperty = async (req: AuthRequest, res: Response) => {
 			return res.status(404).json({ message: 'Not found' });
 		}
 
-		// 🔐 перевірка власника
 		if (
 			req.user!.role !== 'admin' &&
 			property.owner.toString() !== req.user!.id
@@ -148,7 +165,7 @@ export const getMyProperties = async (req: AuthRequest, res: Response) => {
 	try {
 		const properties = await PropertyModel.find({
 			owner: req.user!.id,
-		});
+		}).sort({ createdAt: -1 });
 
 		res.json(properties);
 	} catch (error) {

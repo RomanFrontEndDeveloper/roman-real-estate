@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getProperties } from '@/entities/property/api/getProperties';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PropertyCardSkeleton } from '@/entities/property/ui/PropertyCardSkeleton';
 import { Input } from '@/shared/ui/Input';
@@ -14,15 +14,16 @@ import Link from 'next/link';
 export default function PropertiesPage() {
 	const router = useRouter();
 
-	// 🔥 тільки input state
+	// input state (для UI)
 	const [inputCity, setInputCity] = useState('');
 	const [inputMaxPrice, setInputMaxPrice] = useState('');
 
-	// 🔥 debounce state (для запиту)
+	// debounce state (для API)
 	const [city, setCity] = useState('');
 	const [maxPrice, setMaxPrice] = useState('');
+	const [page, setPage] = useState(1);
 
-	// ⏳ debounce (ОДИН!)
+	// debounce
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			setCity(inputCity);
@@ -32,34 +33,29 @@ export default function PropertiesPage() {
 		return () => clearTimeout(timeout);
 	}, [inputCity, inputMaxPrice]);
 
-	// 🚀 запит
-	const { data, isLoading, error } = useQuery({
-		queryKey: ['properties', city, maxPrice],
+	// reset page при зміні фільтрів
+	useEffect(() => {
+		setPage(1);
+	}, [city, maxPrice]);
+
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}, [page]);
+
+	// fetch
+	const { data, isLoading, isFetching, error } = useQuery({
+		queryKey: ['properties', page, city, maxPrice],
 		queryFn: () =>
-			getProperties({
+			getProperties(page, {
 				city,
 				maxPrice,
 			}),
 		placeholderData: (prev) => prev,
 	});
 
-	// 🔥 фільтр
-	const filteredProperties = useMemo(() => {
-		return data?.filter((property) => {
-			const matchCity = property.location
-				.toLowerCase()
-				.includes(inputCity.trim().toLowerCase());
-
-			const matchPrice =
-				inputMaxPrice === '' || property.price <= Number(inputMaxPrice);
-
-			return matchCity && matchPrice;
-		});
-	}, [data, inputCity, inputMaxPrice]);
-
 	const text = 'No properties found';
 
-	// ⏳ loading
+	// loading skeleton
 	if (isLoading) {
 		return (
 			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
@@ -70,7 +66,7 @@ export default function PropertiesPage() {
 		);
 	}
 
-	// ❌ error
+	// error
 	if (error) {
 		return (
 			<motion.div
@@ -111,6 +107,9 @@ export default function PropertiesPage() {
 					onClick={() => {
 						setInputCity('');
 						setInputMaxPrice('');
+						setCity('');
+						setMaxPrice('');
+						setPage(1);
 					}}
 				>
 					Reset
@@ -120,7 +119,7 @@ export default function PropertiesPage() {
 			{/* ФІЛЬТРИ */}
 			<div className='flex flex-col sm:flex-row gap-4 mb-6'>
 				<Input
-					placeholder='Сity ​​District'
+					placeholder='City / District'
 					value={inputCity}
 					onChange={(e) => setInputCity(e.target.value)}
 				/>
@@ -135,12 +134,12 @@ export default function PropertiesPage() {
 
 			{/* СПИСОК */}
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-				{filteredProperties?.length === 0 ? (
+				{data?.data?.length === 0 ? (
 					<motion.div className='col-span-full text-center text-gray-400 py-10'>
 						{text}
 					</motion.div>
 				) : (
-					filteredProperties?.map((property) => (
+					data?.data.map((property) => (
 						<motion.div
 							key={property.id}
 							initial={{ opacity: 0, y: 20 }}
@@ -151,6 +150,53 @@ export default function PropertiesPage() {
 					))
 				)}
 			</div>
+
+			{/* PAGINATION */}
+			<div className='flex justify-center items-center gap-4 mt-8'>
+				{/* Prev */}
+				<Button
+					variant='outline'
+					onClick={() => setPage((p) => Math.max(p - 1, 1))}
+					disabled={page === 1}
+					className={`px-4 ${
+						page === 1
+							? 'opacity-30 cursor-not-allowed'
+							: 'hover:bg-white/10'
+					}`}
+				>
+					← Prev
+				</Button>
+
+				{/* Page info */}
+				<span className='text-sm text-gray-400'>
+					Page{' '}
+					<span className='font-semibold text-white'>
+						{data?.page}
+					</span>{' '}
+					of <span className='text-gray-300'>{data?.pages}</span>
+				</span>
+
+				{/* Next */}
+				<Button
+					variant='outline'
+					onClick={() =>
+						setPage((p) => (data && p < data.pages ? p + 1 : p))
+					}
+					disabled={page === data?.pages}
+					className={`px-4 ${
+						page === data?.pages
+							? 'opacity-30 cursor-not-allowed'
+							: 'hover:bg-white/10'
+					}`}
+				>
+					Next →
+				</Button>
+			</div>
+
+			{/* subtle loading indicator */}
+			{isFetching && (
+				<p className='text-center text-gray-400 mt-4'>Loading...</p>
+			)}
 		</section>
 	);
 }
