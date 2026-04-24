@@ -4,6 +4,7 @@ import propertyRoutes from './routes/property.routes'; //Підключаєш с
 import authRoutes from './routes/auth.routes';
 import path from 'path';
 import userRoutes from './routes/user.routes';
+import { errorHandler } from './middleware/error.middleware';
 
 export const app = express();
 
@@ -15,6 +16,7 @@ app.use('/api/users', userRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/uploads', express.static('uploads'));
+app.use(errorHandler);
 
 app.get('/', (req, res) => {
 	res.send('API is working 🚀');

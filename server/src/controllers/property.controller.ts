@@ -1,12 +1,10 @@
-import { Response, Request, RequestHandler } from 'express';
+import { Response, RequestHandler, NextFunction } from 'express';
+import mongoose from 'mongoose';
 import { PropertyModel } from '../models/property.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 
 // 📥 Отримати всі (pagination + filters)
-export const getProperties: RequestHandler = async (
-	req: Request,
-	res: Response,
-) => {
+export const getProperties: RequestHandler = async (req, res, next) => {
 	try {
 		const page = parseInt(req.query.page as string) || 1;
 		const limit = parseInt(req.query.limit as string) || 3;
@@ -44,33 +42,43 @@ export const getProperties: RequestHandler = async (
 			pages: Math.ceil(total / limit),
 		});
 	} catch (error) {
-		console.error('GET PROPERTIES ERROR:', error);
-		res.status(500).json({ message: 'Server error' });
+		next(error);
 	}
 };
 
 // 📥 Отримати один
-export const getPropertyById: RequestHandler = async (req, res) => {
+export const getPropertyById: RequestHandler = async (req, res, next) => {
 	try {
-		if (!req.params.id || req.params.id === 'undefined') {
-			return res.status(400).json({ message: 'Invalid ID' });
+		const id = req.params.id as string;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return next({
+				status: 400,
+				message: 'Invalid ID',
+			});
 		}
 
 		const property = await PropertyModel.findById(req.params.id);
 
 		if (!property) {
-			return res.status(404).json({ message: 'Not found' });
+			return next({
+				status: 404,
+				message: 'Property not found',
+			});
 		}
 
 		res.json(property);
 	} catch (error) {
-		console.log('GET BY ID ERROR:', error);
-		res.status(500).json({ message: 'Server error' });
+		next(error);
 	}
 };
 
 // ➕ Створити
-export const createProperty = async (req: AuthRequest, res: Response) => {
+export const createProperty = async (
+	req: AuthRequest,
+	res: Response,
+	next: NextFunction,
+) => {
 	try {
 		const files = req.files as Express.Multer.File[];
 
@@ -86,39 +94,72 @@ export const createProperty = async (req: AuthRequest, res: Response) => {
 
 		res.status(201).json(property);
 	} catch (error: any) {
-		console.error('CREATE ERROR:', error);
-		res.status(400).json({ message: error.message });
+		next({
+			status: 400,
+			message: error.message,
+		});
 	}
 };
 
 // ❌ Видалити
-export const deleteProperty = async (req: AuthRequest, res: Response) => {
+export const deleteProperty = async (
+	req: AuthRequest,
+	res: Response,
+	next: NextFunction,
+) => {
 	try {
+		const id = req.params.id as string;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return next({
+				status: 400,
+				message: 'Invalid ID',
+			});
+		}
+
 		const property = await PropertyModel.findById(req.params.id);
 
 		if (!property) {
-			return res.status(404).json({ message: 'Not found' });
+			return next({
+				status: 404,
+				message: 'Property not found',
+			});
 		}
 
 		if (
 			req.user!.role !== 'admin' &&
 			property.owner.toString() !== req.user!.id
 		) {
-			return res.status(403).json({ message: 'Forbidden' });
+			return next({
+				status: 403,
+				message: 'Forbidden',
+			});
 		}
 
 		await property.deleteOne();
 
 		res.status(204).send();
 	} catch (error) {
-		console.error('DELETE ERROR:', error);
-		res.status(500).json({ message: 'Server error' });
+		next(error);
 	}
 };
 
 // ✏️ Оновити
-export const updateProperty = async (req: AuthRequest, res: Response) => {
+export const updateProperty = async (
+	req: AuthRequest,
+	res: Response,
+	next: NextFunction,
+) => {
 	try {
+		const id = req.params.id as string;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return next({
+				status: 400,
+				message: 'Invalid ID',
+			});
+		}
+
 		const { title, price, location } = req.body;
 
 		const files = req.files as Express.Multer.File[];
@@ -136,14 +177,20 @@ export const updateProperty = async (req: AuthRequest, res: Response) => {
 		const property = await PropertyModel.findById(req.params.id);
 
 		if (!property) {
-			return res.status(404).json({ message: 'Not found' });
+			return next({
+				status: 404,
+				message: 'Property not found',
+			});
 		}
 
 		if (
 			req.user!.role !== 'admin' &&
 			property.owner.toString() !== req.user!.id
 		) {
-			return res.status(403).json({ message: 'Forbidden' });
+			return next({
+				status: 403,
+				message: 'Forbidden',
+			});
 		}
 
 		property.title = title;
@@ -155,13 +202,16 @@ export const updateProperty = async (req: AuthRequest, res: Response) => {
 
 		res.json(property);
 	} catch (error) {
-		console.error('UPDATE ERROR:', error);
-		res.status(500).json({ message: 'Server error' });
+		next(error);
 	}
 };
 
 // 📥 Мої оголошення
-export const getMyProperties = async (req: AuthRequest, res: Response) => {
+export const getMyProperties = async (
+	req: AuthRequest,
+	res: Response,
+	next: NextFunction,
+) => {
 	try {
 		const properties = await PropertyModel.find({
 			owner: req.user!.id,
@@ -169,7 +219,6 @@ export const getMyProperties = async (req: AuthRequest, res: Response) => {
 
 		res.json(properties);
 	} catch (error) {
-		console.error('MY PROPERTIES ERROR:', error);
-		res.status(500).json({ message: 'Failed to fetch properties' });
+		next(error);
 	}
 };
