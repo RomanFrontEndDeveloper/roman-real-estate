@@ -16,8 +16,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-	title: 'RomanRealEstate',
-	description: 'Luxury real estate platform',
+	title: 'Roman Real Estate',
+	description: 'Premium real estate platform',
 };
 
 export default function RootLayout({

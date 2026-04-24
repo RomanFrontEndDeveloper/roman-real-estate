@@ -2,16 +2,29 @@ import { Hero } from '@/shared/components/Hero';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
 import { getProperties } from '@/entities/property/api/getProperties';
 
+export const metadata = {
+	title: 'Roman Real Estate | Buy & Rent Properties',
+	description:
+		'Find the best real estate properties. Buy, rent, and explore luxury homes.',
+};
+
 export default async function Home() {
-	const properties = await getProperties();
+	let properties;
+
+	try {
+		properties = await getProperties();
+	} catch {
+		properties = { data: [] };
+	}
+
 	return (
 		<>
 			{/* HERO */}
 			<Hero />
 
-			{/* POPULAR PROPERTIES */}
+			{/* PROPERTIES */}
 			<section className='mt-16'>
-				{properties?.length > 0 && (
+				{properties?.data?.length > 0 && (
 					<h2 className='text-3xl font-bold mb-6 text-[var(--gold)]'>
 						Popular Properties
 					</h2>
