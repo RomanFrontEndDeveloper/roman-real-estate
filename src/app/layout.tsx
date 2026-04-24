@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from 'next/font/google';
 import { Header } from '@/shared/components/Header';
 import { Footer } from '@/shared/components/Footer';
 import { Providers } from './providers';
+import { Toaster } from 'react-hot-toast';
 
 const playfair = Playfair_Display({
 	subsets: ['latin'],
@@ -31,6 +32,7 @@ export default function RootLayout({
 					<Header />
 					<main className='container py-6'>{children}</main>
 					<Footer />
+					<Toaster position='top-right' reverseOrder={false} />
 				</Providers>
 			</body>
 		</html>

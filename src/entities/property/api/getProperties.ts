@@ -1,12 +1,8 @@
-export const getProperties = async (
-	page = 1,
-	filters?,
-	limit = 6, // 👈 додали
-) => {
+export const getProperties = async (page = 1, filters?, limit = 6) => {
 	const params = new URLSearchParams();
 
 	params.append('page', String(page));
-	params.append('limit', String(limit)); // 👈 ось тут
+	params.append('limit', String(limit));
 
 	if (filters?.city) params.append('city', filters.city);
 	if (filters?.maxPrice) params.append('maxPrice', filters.maxPrice);
@@ -14,6 +10,16 @@ export const getProperties = async (
 	const res = await fetch(
 		`http://localhost:5000/api/properties?${params.toString()}`,
 	);
+
+	// 🔥 ГОЛОВНЕ
+	if (res.status === 404) {
+		return {
+			data: [],
+			total: 0,
+			page,
+			pages: 0,
+		};
+	}
 
 	if (!res.ok) {
 		throw new Error('Failed to fetch properties');

@@ -10,8 +10,15 @@ export default function MyPropertiesPage() {
 		queryFn: getMyProperties,
 	});
 
-	if (isLoading && !data) return <p>Loading...</p>;
-	if (error) return <p>Error loading properties</p>;
+	if (isLoading) {
+		return <div className='text-white p-6'>Loading...</div>;
+	}
+
+	if (error) {
+		return (
+			<div className='text-red-500 p-6'>Failed to load property ❌</div>
+		);
+	}
 
 	return (
 		<section className='px-4 sm:px-6 lg:px-8 mt-6'>

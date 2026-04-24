@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Property } from '@/entities/property/types';
@@ -9,22 +10,26 @@ import { toggleFavorite } from '@/entities/user/api/toggleFavorite';
 import { getMe } from '@/entities/user/api/getMe';
 import { Button } from '@/shared/ui/Button';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { ConfirmModal } from '@/shared/ui/src/shared/ui/ConfirmModal';
 
 type Props = {
 	property: Property;
 };
 
 export const PropertyCard = ({ property }: Props) => {
+	const [isOpen, setIsOpen] = useState(false);
+
 	const router = useRouter();
 	const queryClient = useQueryClient();
 
-	// 🔥 отримуємо юзера
+	// 👤 user
 	const { data: user } = useQuery({
 		queryKey: ['me'],
 		queryFn: getMe,
 	});
 
-	// ❤️ чи в favorites
+	// ❤️ favorite check
 	const isFavorite = user?.favorites?.includes(property.id);
 
 	// 🗑 delete
@@ -32,14 +37,22 @@ export const PropertyCard = ({ property }: Props) => {
 		mutationFn: deleteProperty,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['properties'] });
+			toast.success('Property deleted 🗑');
+		},
+		onError: () => {
+			toast.error('Failed to delete');
 		},
 	});
 
-	// ❤️ toggle
+	// ❤️ toggle favorite
 	const favoriteMutation = useMutation({
 		mutationFn: toggleFavorite,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['me'] });
+			toast.success('Favorites updated ❤️');
+		},
+		onError: () => {
+			toast.error('Error updating favorites');
 		},
 	});
 
@@ -68,9 +81,10 @@ export const PropertyCard = ({ property }: Props) => {
 
 					{/* ❤️ FAVORITE */}
 					<Button
+						disabled={favoriteMutation.isPending}
 						onClick={(e) => {
 							e.preventDefault();
-							e.stopPropagation(); // 🔥 ОЦЕ ДОДАЙ
+							e.stopPropagation();
 							favoriteMutation.mutate(property.id);
 						}}
 						className='absolute top-3 right-3 bg-black/60 backdrop-blur px-2 py-1 rounded-lg'
@@ -101,13 +115,10 @@ export const PropertyCard = ({ property }: Props) => {
 							{/* EDIT */}
 							<Button
 								variant='outline'
-								className='
-									w-full px-4 py-2 border border-gray-600 text-white rounded-xl
-									bg-white/5 backdrop-blur-md hover:bg-white hover:text-black
-									hover:scale-105 transition-all duration-300 shadow-md
-								'
+								className='w-full px-4 py-2 border border-gray-600 text-white rounded-xl bg-white/5 backdrop-blur-md hover:bg-white hover:text-black hover:scale-105 transition-all duration-300 shadow-md'
 								onClick={(e) => {
 									e.preventDefault();
+									e.stopPropagation();
 									router.push(
 										`/properties/${property.id}/edit`,
 									);
@@ -119,23 +130,31 @@ export const PropertyCard = ({ property }: Props) => {
 							{/* DELETE */}
 							<Button
 								variant='outline'
-								className='
-									w-full px-4 py-2 border border-red-500/40 text-red-400 rounded-xl
-									bg-red-500/10 backdrop-blur-md hover:bg-red-500 hover:text-white
-									hover:scale-105 transition-all duration-300 shadow-md
-								'
+								disabled={deleteMutation.isPending}
+								className='w-full px-4 py-2 border border-red-500/40 text-red-400 rounded-xl bg-red-500/10 backdrop-blur-md hover:bg-red-500 hover:text-white hover:scale-105 transition-all duration-300 shadow-md'
 								onClick={(e) => {
 									e.preventDefault();
+									e.stopPropagation();
 
-									if (confirm('Delete this property?')) {
-										deleteMutation.mutate(property.id);
-									}
+									setIsOpen(true);
 								}}
 							>
-								🗑 Delete
+								{deleteMutation.isPending
+									? 'Deleting...'
+									: '🗑 Delete'}
 							</Button>
 						</div>
 					</div>
+					<ConfirmModal
+						isOpen={isOpen}
+						onClose={() => setIsOpen(false)}
+						onConfirm={() => {
+							setIsOpen(false); // 🔥 ЗАКРИВАЄМО
+							deleteMutation.mutate(property.id);
+						}}
+						title='Delete property?'
+						description='This action cannot be undone.'
+					/>
 				</div>
 			</motion.div>
 		</Link>

@@ -7,6 +7,11 @@ export const getMyProperties = async () => {
 		},
 	});
 
+	// 🔥 ГОЛОВНЕ
+	if (res.status === 404) {
+		return [];
+	}
+
 	if (!res.ok) {
 		throw new Error('Failed to fetch my properties');
 	}
