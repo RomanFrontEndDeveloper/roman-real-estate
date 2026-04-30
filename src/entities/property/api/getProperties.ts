@@ -1,6 +1,6 @@
-export const getProperties = async (page = 1, filters?, limit = 6) => {
+export const getProperties = async (page = 1, filters?, limit = 3) => {
 	try {
-		const params = new URLSearchParams();
+		const params = new URLSearchParams(); //“зручний спосіб збирати рядок типу ?page=1&limit=3”
 
 		params.append('page', String(page));
 		params.append('limit', String(limit));

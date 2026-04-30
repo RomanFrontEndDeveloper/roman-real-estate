@@ -1,25 +1,30 @@
-import express from 'express';
-import cors from 'cors'; //CORS:Дозволяє фронтенду (напр. React) робити запити на backend
-import propertyRoutes from './routes/property.routes'; //Підключаєш свої маршрути (routes)
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import path from 'path'; // робота з файловою системою (шлях до папок)
+
+import propertyRoutes from './routes/property.routes';
 import authRoutes from './routes/auth.routes';
-import path from 'path';
 import userRoutes from './routes/user.routes';
 import { errorHandler } from './middleware/error.middleware';
 
 export const app = express();
 
-app.use(cors()); //дозволяє фронтенду звертатись до бекенду
-app.use(express.json()); //middleware, який парсить JSON.
-app.use('/api/properties', propertyRoutes); //підключення роутів для нерухомості.
-app.use('/api/auth', authRoutes); //підключення роутів для авторизації
+// 🔹 Middlewares
+app.use(cors());
+app.use(express.json());
+
+// 🔹 Static files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// 🔹 Routes
+app.use('/api/properties', propertyRoutes); //Ти “підключаєш” роутер propertyRoutes до базового URL
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-app.use('/uploads', express.static('uploads'));
-app.use(errorHandler);
-
-app.get('/', (req, res) => {
+// 🔹 Test route
+app.get('/', (req: Request, res: Response) => {
 	res.send('API is working 🚀');
-}); //Коли хтось заходить на головну адресу сервера (/) через GET-запит — сервер відповідає текстом.
+});
 
-//Middleware — це функція, яка виконується між запитом і відповіддю (наприклад cors або express.json)
+// 🔥 ERROR HANDLER — завжди ОСТАННІЙ
+app.use(errorHandler);

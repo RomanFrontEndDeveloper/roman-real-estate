@@ -16,7 +16,10 @@ const inter = Inter({
 });
 
 export const metadata = {
-	title: 'Roman Real Estate',
+	title: {
+		default: 'Roman Real Estate',
+		template: '%s | Roman Real Estate',
+	},
 	description: 'Premium real estate platform',
 };
 

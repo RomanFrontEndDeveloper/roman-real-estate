@@ -37,9 +37,9 @@ export const Header = () => {
 					<Link className={linkClass2} href='/properties'>
 						Properties
 					</Link>
-					<Link className={linkClass2} href='/agents'>
+					{/* <Link className={linkClass2} href='/agents'>
 						Agents
-					</Link>
+					</Link> */}
 					{/* 🔙 Кнопка назад */}
 					<Button
 						type='button'
@@ -100,13 +100,13 @@ export const Header = () => {
 							>
 								Properties
 							</Link>
-							<Link
+							{/* <Link
 								className={linkClass}
 								href='/agents'
 								onClick={() => setIsOpen(false)}
 							>
 								Agents
-							</Link>
+							</Link> */}
 						</nav>
 
 						<Button

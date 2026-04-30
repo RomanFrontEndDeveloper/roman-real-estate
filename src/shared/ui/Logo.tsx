@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 
 export const Logo = () => {
@@ -45,10 +43,14 @@ export const Logo = () => {
 
 			{/* текст */}
 			<div className='block leading-tight'>
+				{' '}
+				{/* line-height: 1.25;*/}
 				<div className='text-(--gold) text-sm font-semibold'>
 					RomanRealEstate
 				</div>
 				<div className='text-[10px] tracking-widest text-gray-500'>
+					{' '}
+					{/* /letter-spacing: 0.1em; */}
 					REAL ESTATE
 				</div>
 			</div>

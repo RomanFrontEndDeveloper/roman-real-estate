@@ -13,42 +13,36 @@ export default function PropertyPageClient({ id }) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 
-	const propertyId = Array.isArray(id) ? id[0] : id;
-
-	const [isDeleted, setIsDeleted] = useState(false);
+	const propertyId = Array.isArray(id) ? id[0] : (id ?? '');
 	const [isOpen, setIsOpen] = useState(false);
 
 	// 🔥 GET PROPERTY
 	const { data: property, isLoading } = useQuery({
 		queryKey: ['property', propertyId],
-		queryFn: () => getPropertyById(propertyId as string),
+		queryFn: () => getPropertyById(propertyId),
 		retry: false,
-		enabled: !!propertyId && !isDeleted,
+		enabled: !!propertyId,
 	});
 
 	// 🔥 DELETE
 	const deleteMutation = useMutation({
 		mutationFn: deleteProperty,
 		onSuccess: () => {
-			setIsDeleted(true);
-
 			toast.success('Property deleted 🗑');
-
 			queryClient.invalidateQueries({ queryKey: ['properties'] });
-
-			queryClient.removeQueries({
-				queryKey: ['property', propertyId],
-			});
-
 			router.push('/properties');
 		},
-		onError: () => {
-			toast.error('Failed to delete ❌');
+		onError: (error: any) => {
+			toast.error(error?.message || 'Failed to delete ❌');
 		},
 	});
 
-	// 🔥 після видалення
-	if (isDeleted) return null;
+	const currentId = property?.id || property?._id;
+
+	const handleDelete = () => {
+		if (!currentId) return;
+		deleteMutation.mutate(currentId);
+	};
 
 	// 🔥 loading
 	if (isLoading) {
@@ -71,43 +65,40 @@ export default function PropertyPageClient({ id }) {
 	return (
 		<section className='mt-10 px-2 sm:px-4'>
 			{/* 🖼️ GALLERY */}
-			<div className='w-full mb-6'>
-				<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
-					{property.images?.length > 0 ? (
-						property.images.map((img: string) => (
-							<img
-								key={img}
-								src={`http://localhost:5000/${img}`}
-								className='w-full h-[220px] sm:h-[200px] md:h-[180px] object-cover rounded'
-								alt={property.title}
-							/>
-						))
-					) : (
+			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-6'>
+				{property.images?.length > 0 ? (
+					property.images.map((img: string) => (
 						<img
-							src='/placeholder2.png'
-							className='w-full h-[220px] object-cover rounded'
-							alt='no image'
+							key={img}
+							src={`http://localhost:5000/${img}`}
+							className='w-full h-[200px] object-cover rounded'
+							alt={property.title}
 						/>
-					)}
-				</div>
+					))
+				) : (
+					<img
+						src='/placeholder2.png'
+						className='w-full h-[200px] object-cover rounded'
+						alt='no image'
+					/>
+				)}
 			</div>
 
 			{/* 🧾 INFO */}
-			<div className='flex flex-col sm:flex-row sm:justify-between gap-6 bg-[#0f0f0f] p-6 sm:p-8 rounded-2xl border border-gray-800 shadow-lg relative'>
-				<div className='max-w-xl'>
-					<h1 className='text-3xl sm:text-4xl font-bold text-[var(--gold)] mb-2 tracking-wide'>
+			<div className='flex flex-col sm:flex-row justify-between gap-6 bg-[#0f0f0f] p-6 rounded-2xl border border-gray-800 shadow-lg relative'>
+				<div>
+					<h1 className='text-3xl font-bold text-[var(--gold)] mb-2'>
 						{property.title}
 					</h1>
 
 					<p className='text-gray-400 mb-4'>📍 {property.location}</p>
 
-					<p className='text-2xl sm:text-3xl font-semibold text-white mb-4'>
+					<p className='text-2xl font-semibold text-white'>
 						${property.price.toLocaleString()}
 					</p>
 				</div>
 
-				{/* BUTTONS */}
-				<div className='absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 w-[120px]'>
+				<div className='flex flex-col gap-3 w-[120px]'>
 					<Button
 						variant='outline'
 						disabled={deleteMutation.isPending}
@@ -133,9 +124,7 @@ export default function PropertyPageClient({ id }) {
 			<ConfirmModal
 				isOpen={isOpen}
 				onClose={() => setIsOpen(false)}
-				onConfirm={() =>
-					deleteMutation.mutate(property.id || property._id)
-				}
+				onConfirm={handleDelete}
 				title='Delete property?'
 				description='This action cannot be undone.'
 			/>

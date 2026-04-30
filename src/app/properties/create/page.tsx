@@ -117,7 +117,8 @@ export default function CreatePropertyPage() {
 					{/* PREVIEW */}
 					<div className='grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4'>
 						{files.map((file, index) => {
-							const url = URL.createObjectURL(file);
+							const url = URL.createObjectURL(file); //це вбудований Web API перетворює File → у тимчасовий URL
+							//дозволяє показати картинку ДО завантаження на сервер
 
 							return (
 								<div

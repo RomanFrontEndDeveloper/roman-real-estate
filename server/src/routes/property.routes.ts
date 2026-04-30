@@ -7,16 +7,8 @@ const router = Router();
 
 router.post(
 	'/',
-	(req, res, next) => {
-		console.log('🔥 START');
-		next();
-	},
 	verifyToken,
-	upload.array('images', 5),
-	(req, res, next) => {
-		console.log('🔥 AFTER UPLOAD');
-		next();
-	},
+	upload.array('images', 10),
 	controller.createProperty,
 );
 
@@ -27,9 +19,10 @@ router.get('/:id', controller.getPropertyById);
 router.patch(
 	'/:id',
 	verifyToken,
-	upload.array('images', 5), // 🔥 ОБОВʼЯЗКОВО
+	upload.array('images', 10),
 	controller.updateProperty,
 );
+
 router.delete('/:id', verifyToken, controller.deleteProperty);
 
 export default router;

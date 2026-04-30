@@ -20,35 +20,35 @@ export const ConfirmModal = ({
 }: Props) => {
 	if (!isOpen) return null;
 
+	// 👉 один універсальний стопер
+	const stop = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+	};
+
 	return (
 		<AnimatePresence>
 			<>
-				{/* 🔥 BACKDROP */}
+				{/* BACKDROP */}
 				<motion.div
 					className='fixed inset-0 bg-black/60 backdrop-blur-sm z-50'
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
-					onClick={(e) => {
-						e.preventDefault();
-						e.stopPropagation(); // 🔥 блокує всі кліки назовні
-						onClose();
-					}}
+					onClick={onClose} // 👉 тут не треба стопів
 				/>
 
-				{/* 🔥 MODAL */}
+				{/* MODAL WRAPPER */}
 				<motion.div
 					className='fixed inset-0 flex items-center justify-center z-50 px-4'
 					initial={{ scale: 0.9, opacity: 0 }}
 					animate={{ scale: 1, opacity: 1 }}
 					exit={{ scale: 0.9, opacity: 0 }}
-					onClick={(e) => {
-						e.stopPropagation(); // 🔥 захист від Link
-					}}
+					onClick={stop} // 👉 блокує кліки всередині
 				>
 					<div
 						className='bg-[var(--secondary)] rounded-2xl p-6 w-full max-w-sm shadow-xl border border-gray-700'
-						onClick={(e) => e.stopPropagation()}
+						onClick={stop}
 					>
 						<h2 className='text-xl font-semibold text-white mb-2'>
 							{title}
@@ -57,26 +57,14 @@ export const ConfirmModal = ({
 						<p className='text-gray-400 mb-6'>{description}</p>
 
 						<div className='flex justify-end gap-3'>
-							{/* ❌ CANCEL */}
-							<Button
-								variant='outline'
-								onClick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									onClose();
-								}}
-							>
+							<Button variant='outline' onClick={onClose}>
 								Cancel
 							</Button>
 
-							{/* ✅ DELETE */}
 							<Button
 								className='bg-red-600 hover:bg-red-700 text-white'
-								onClick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
+								onClick={() => {
 									onConfirm();
-									onClose();
 								}}
 							>
 								Delete

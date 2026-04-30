@@ -3,7 +3,7 @@ import PropertyPageClient from './PropertyPageClient';
 
 // 🔥 SEO
 export async function generateMetadata({ params }) {
-	const { id } = await params; // 🔥 ВАЖЛИВО
+	const { id } = await params;
 
 	try {
 		const property = await getPropertyById(id);
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
 
 // 🔥 PAGE
 export default async function Page({ params }) {
-	const { id } = await params; // 🔥 ОСЬ ЦЕ ТИ ЗАБУВ
+	const { id } = await params;
 
 	return <PropertyPageClient id={id} />;
 }

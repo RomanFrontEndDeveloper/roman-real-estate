@@ -101,7 +101,8 @@ export default function EditPropertyPage() {
 						onChange={(e) => {
 							console.log('CHANGE TRIGGERED');
 							if (e.target.files) {
-								const arr = Array.from(e.target.files);
+								//(e.target.files) це FileList НЕ масив
+								const arr = Array.from(e.target.files); //перетворюєм в масив File[]
 								console.log('SELECTED FILES:', arr);
 								setFiles((prev) => [
 									...prev,
@@ -113,7 +114,7 @@ export default function EditPropertyPage() {
 
 					<p className='text-gray-400 text-sm text-center bg-gray-950 rounded-xl p-3'>
 						You can add new photos <br /> or remove old ones <br />
-						(all 1 - 5 Foto)
+						(all 1 - 10 Foto)
 					</p>
 
 					{/* 🔥 СТАРІ ФОТО */}

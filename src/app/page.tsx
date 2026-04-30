@@ -3,9 +3,8 @@ import { PropertyCard } from '@/entities/property/ui/PropertyCard';
 import { getProperties } from '@/entities/property/api/getProperties';
 
 export const metadata = {
-	title: 'Roman Real Estate | Buy & Rent Properties',
-	description:
-		'Find the best real estate properties. Buy, rent, and explore luxury homes.',
+	title: 'Buy & Rent Properties',
+	description: 'Find the best real estate properties...',
 };
 
 export default async function Home() {
@@ -23,9 +22,9 @@ export default async function Home() {
 			<Hero />
 
 			{/* PROPERTIES */}
-			<section className='mt-16'>
+			<section className='mt-8'>
 				{properties?.data?.length > 0 && (
-					<h2 className='text-3xl font-bold mb-6 text-[var(--gold)]'>
+					<h2 className='text-3xl font-bold mb-7 text-[var(--gold)]'>
 						Popular Properties
 					</h2>
 				)}
