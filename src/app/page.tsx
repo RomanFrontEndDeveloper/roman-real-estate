@@ -1,6 +1,7 @@
 import { Hero } from '@/shared/components/Hero';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
 import { getProperties } from '@/entities/property/api/getProperties';
+import { Property } from '@/entities/property/types';
 
 export const metadata = {
 	title: 'Buy & Rent Properties',
@@ -30,7 +31,7 @@ export default async function Home() {
 				)}
 
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-					{properties?.data?.slice(0, 3).map((property) => (
+					{properties?.data?.slice(0, 3).map((property: Property) => (
 						<PropertyCard key={property.id} property={property} />
 					))}
 				</div>
