@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
 		role: {
 			type: String,
 			enum: ['admin', 'agent'],
-			default: 'agent',
+			default: 'admin',
 		},
 		favorites: [
 			{

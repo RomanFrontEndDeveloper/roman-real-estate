@@ -1,13 +1,14 @@
 # RomanRealEstate 🏡
 
-Fullstack real estate platform with modern UI, authentication, and property management.
+Fullstack real estate platform with authentication, property management, and modern UI.
 
 ---
 
 ## 🚀 Overview
 
-RomanRealEstate is a fullstack web application for managing real estate listings.
-Users can register, log in, create properties with images, and manage their listings.
+RomanRealEstate is a fullstack web application that allows users to create, manage, and explore real estate listings.
+
+The project is built with a focus on real-world architecture, including authentication, API integration, file uploads, and deployment.
 
 ---
 
@@ -19,15 +20,21 @@ Users can register, log in, create properties with images, and manage their list
 - React
 - TypeScript
 - Tailwind CSS
-- TanStack Query
+- TanStack Query (React Query)
 
 ### Backend
 
+- Node.js
 - Express.js
-- Mongoose
-- jsonwebtoken
-- multer
 - MongoDB
+- Mongoose
+- JSON Web Token (JWT)
+- Multer (file uploads)
+
+### Deployment
+
+- Frontend: Vercel
+- Backend: Render
 
 ---
 
@@ -35,29 +42,30 @@ Users can register, log in, create properties with images, and manage their list
 
 ### 🔐 Authentication
 
-- Register & Login
+- User registration & login
 - JWT-based authentication
-- Protected routes
+- Protected API routes
 
 ### 🏠 Properties
 
-- Create property with images
-- View all properties
+- Create property with image upload
+- View all properties (with filters & pagination)
 - View single property page
+- Edit property (partial implementation)
 - Delete property
-- Edit property (in progress)
 
 ### ❤️ User Features
 
 - Add/remove favorites
-- Get current user data
+- Fetch current user data
 
 ### 🎨 UI/UX
 
 - Responsive design
-- Modern card layout
-- Image gallery
+- Modern card-based layout
+- Image preview & gallery
 - Toast notifications
+- Loading & error states
 
 ---
 
@@ -65,16 +73,16 @@ Users can register, log in, create properties with images, and manage their list
 
 ```
 client/
-  app/
-  entities/
-  shared/
+  app/          # Next.js routes (App Router)
+  entities/     # Business logic (API, types)
+  shared/       # UI components
 
 server/
-  controllers/
-  routes/
-  models/
-  middleware/
-  services/
+  controllers/  # Request handlers
+  routes/       # API routes
+  models/       # Mongoose models
+  middleware/   # Auth & error handling
+  services/     # Business logic
 ```
 
 ---
@@ -118,6 +126,12 @@ MONGO_URI=your_mongodb_connection
 JWT_SECRET=your_secret_key
 ```
 
+Frontend `.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
+
 ---
 
 ### 4. Run project
@@ -138,7 +152,7 @@ npm run dev
 
 ---
 
-## 🌐 API Endpoints (examples)
+## 🌐 API Endpoints
 
 ```
 POST   /api/auth/register
@@ -149,6 +163,7 @@ GET    /api/properties/:id
 GET    /api/properties/my
 
 POST   /api/properties
+PATCH  /api/properties/:id
 DELETE /api/properties/:id
 
 POST   /api/users/favorites
@@ -160,38 +175,39 @@ GET    /api/users/me
 ## 🔐 Authentication Flow
 
 1. User logs in → receives JWT token
-2. Token stored in localStorage
-3. Token sent via Authorization header
+2. Token is stored on client
+3. Token is sent via Authorization header
 4. Backend verifies token (middleware)
-5. Access to protected routes
+5. User gets access to protected routes
 
 ---
 
 ## 📦 File Upload
 
-- Images are uploaded using multipart/form-data
+- Images are uploaded using `multipart/form-data`
 - Stored on server (`/uploads`)
-- Served as static files
+- Served as static files via Express
 
 ---
 
 ## 🚀 Deployment
 
-- Frontend: Vercel
-- Backend: Render / Railway / VPS
+- Frontend deployed on Vercel
+- Backend deployed on Render
 
 ---
 
 ## 📌 Project Goal
 
-This project is built to grow from **Junior → Middle → Fullstack Developer**,
-focusing on real-world architecture, authentication, and data flow.
+This project is designed to simulate a real production-ready fullstack application
+and demonstrate skills required for a Junior / Strong Junior / Middle Frontend Developer role.
 
 ---
 
 ## 📧 Contact
 
-Roman Okhremov
-romariotraveler@gmail.com
-@T168234
-Frontend / Fullstack Developer (in progress)
+**Roman Okhremov**
+Frontend / Fullstack Developer
+
+- Email: [romariotraveler@gmail.com](mailto:romariotraveler@gmail.com)
+- Telegram: @T168234
