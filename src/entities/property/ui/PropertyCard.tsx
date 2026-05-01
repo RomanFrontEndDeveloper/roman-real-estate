@@ -58,7 +58,7 @@ export const PropertyCard = ({ property }: Props) => {
 	});
 
 	return (
-		<Link href={`/properties/${getId(property)}`}>
+		<Link href={`/properties/${property.id}`}>
 			<motion.div
 				className='group bg-[var(--secondary)] rounded overflow-hidden cursor-pointer hover:shadow-[0_0_25px_rgba(201,169,110,0.2)] transition'
 				whileHover={{ scale: 1.04, y: -5 }}
