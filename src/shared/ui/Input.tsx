@@ -3,6 +3,7 @@ type InputProps = {
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	placeholder?: string;
 	type?: string;
+	disabled?: boolean; // 👈 ДОДАТИ
 };
 
 export const Input = ({
@@ -10,6 +11,7 @@ export const Input = ({
 	onChange,
 	placeholder,
 	type = 'text',
+	disabled,
 }: InputProps) => {
 	return (
 		<input
@@ -17,6 +19,7 @@ export const Input = ({
 			value={value}
 			onChange={onChange}
 			placeholder={placeholder}
+			disabled={disabled} // 👈 ДОДАТИ
 			className='
         px-4 py-2
         bg-[var(--secondary)]
