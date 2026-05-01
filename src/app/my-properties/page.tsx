@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getMyProperties } from '@/entities/property/api/getMyProperties';
 import { PropertyCard } from '@/entities/property/ui/PropertyCard';
+import { Property } from '@/entities/property/types';
 
 export default function MyPropertiesPage() {
 	const { data, isLoading, error } = useQuery({
@@ -27,7 +28,7 @@ export default function MyPropertiesPage() {
 			</h1>
 
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-				{data?.map((property) => (
+				{data?.map((property: Property) => (
 					<PropertyCard key={property.id} property={property} />
 				))}
 			</div>
