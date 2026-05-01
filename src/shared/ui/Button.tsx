@@ -1,19 +1,15 @@
-type ButtonProps = {
-	children: React.ReactNode;
-	onClick?: () => void;
-	type?: 'button' | 'submit';
+import React from 'react';
+
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	variant?: 'primary' | 'outline';
-	className?: string;
-	disabled?: boolean;
 };
 
 export const Button = ({
 	children,
-	onClick,
-	type = 'button',
 	variant = 'primary',
 	className = '',
-	disabled = false,
+	disabled,
+	...props
 }: ButtonProps) => {
 	const base =
 		'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 active:scale-95';
@@ -25,11 +21,10 @@ export const Button = ({
 
 	return (
 		<button
-			type={type}
-			onClick={onClick}
+			{...props}
 			disabled={disabled}
 			className={`${base} ${variantStyles} ${className} ${
-				disabled && 'opacity-40 cursor-not-allowed'
+				disabled ? 'opacity-40 cursor-not-allowed' : ''
 			}`}
 		>
 			{children}
