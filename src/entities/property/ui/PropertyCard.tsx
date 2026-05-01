@@ -12,6 +12,7 @@ import { Button } from '@/shared/ui/Button';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { ConfirmModal } from '@/shared/ui/src/shared/ui/ConfirmModal';
+import { getId } from '@/entities/property/types';
 
 type Props = {
 	property: Property;
@@ -57,7 +58,7 @@ export const PropertyCard = ({ property }: Props) => {
 	});
 
 	return (
-		<Link href={`/properties/${property.id}`}>
+		<Link href={`/properties/${getId(property)}`}>
 			<motion.div
 				className='group bg-[var(--secondary)] rounded overflow-hidden cursor-pointer hover:shadow-[0_0_25px_rgba(201,169,110,0.2)] transition'
 				whileHover={{ scale: 1.04, y: -5 }}
@@ -85,7 +86,7 @@ export const PropertyCard = ({ property }: Props) => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							favoriteMutation.mutate(property.id);
+							favoriteMutation.mutate(getId(property));
 						}}
 						className='absolute top-3 right-3 bg-black/60 backdrop-blur px-2 py-1 rounded-lg'
 					>
@@ -150,7 +151,7 @@ export const PropertyCard = ({ property }: Props) => {
 						onClose={() => setIsOpen(false)}
 						onConfirm={() => {
 							setIsOpen(false); // 🔥 ЗАКРИВАЄМО
-							deleteMutation.mutate(property.id);
+							deleteMutation.mutate(getId(property));
 						}}
 						title='Delete property?'
 						description='This action cannot be undone.'
