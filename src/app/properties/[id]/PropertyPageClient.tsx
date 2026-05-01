@@ -9,11 +9,16 @@ import { ConfirmModal } from '@/shared/ui/src/shared/ui/ConfirmModal';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 
-export default function PropertyPageClient({ id }) {
+type Props = {
+	id: string | string[] | undefined;
+};
+
+export default function PropertyPageClient({ id }: Props) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 
 	const propertyId = Array.isArray(id) ? id[0] : (id ?? '');
+
 	const [isOpen, setIsOpen] = useState(false);
 
 	// 🔥 GET PROPERTY
@@ -32,8 +37,12 @@ export default function PropertyPageClient({ id }) {
 			queryClient.invalidateQueries({ queryKey: ['properties'] });
 			router.push('/properties');
 		},
-		onError: (error: any) => {
-			toast.error(error?.message || 'Failed to delete ❌');
+		onError: (error: unknown) => {
+			if (error instanceof Error) {
+				toast.error(error.message);
+			} else {
+				toast.error('Failed to delete ❌');
+			}
 		},
 	});
 

@@ -1,6 +1,28 @@
-export const getProperties = async (page = 1, filters?, limit = 3) => {
+type PropertyFromApi = {
+	_id: string;
+	title: string;
+	price: number;
+	location: string;
+	images: string[];
+	owner: string;
+	createdAt: string;
+	updatedAt: string;
+};
+
+type PropertiesResponse = {
+	data: PropertyFromApi[];
+	total: number;
+	page: number;
+	pages: number;
+};
+
+export const getProperties = async (
+	page = 1,
+	filters?: { city?: string; maxPrice?: string },
+	limit = 3,
+) => {
 	try {
-		const params = new URLSearchParams(); //“зручний спосіб збирати рядок типу ?page=1&limit=3”
+		const params = new URLSearchParams();
 
 		params.append('page', String(page));
 		params.append('limit', String(limit));
@@ -12,7 +34,6 @@ export const getProperties = async (page = 1, filters?, limit = 3) => {
 			`${process.env.NEXT_PUBLIC_API_URL}/api/properties?${params.toString()}`,
 		);
 
-		// якщо не знайдено
 		if (res.status === 404) {
 			return {
 				data: [],
@@ -26,11 +47,11 @@ export const getProperties = async (page = 1, filters?, limit = 3) => {
 			throw new Error('Failed to fetch properties');
 		}
 
-		const data = await res.json();
+		const data: PropertiesResponse = await res.json();
 
 		return {
 			...data,
-			data: data.data.map((item: any) => ({
+			data: data.data.map((item) => ({
 				...item,
 				id: item._id,
 			})),
@@ -38,7 +59,6 @@ export const getProperties = async (page = 1, filters?, limit = 3) => {
 	} catch (error) {
 		console.error('❌ FETCH ERROR:', error);
 
-		// 🔥 fallback щоб НЕ падав SSR
 		return {
 			data: [],
 			total: 0,

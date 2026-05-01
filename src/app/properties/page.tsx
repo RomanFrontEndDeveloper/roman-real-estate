@@ -13,6 +13,13 @@ import Link from 'next/link';
 import { getMe } from '@/entities/user/api/getMe';
 import { Property } from '@/entities/property/types';
 
+type PropertiesResponse = {
+	data: Property[];
+	total: number;
+	page: number;
+	pages: number;
+};
+
 export default function PropertiesPage() {
 	const router = useRouter();
 
@@ -72,17 +79,18 @@ export default function PropertiesPage() {
 	// =========================
 	// 8. FETCH DATA
 	// =========================
-	const { data, isLoading, isFetching, error } = useQuery({
-		queryKey: ['properties', page, city, maxPrice, showFavorites],
-		queryFn: () => {
-			const currentPage = showFavorites ? 1 : page;
-			const limit = showFavorites ? 1000 : 3;
+	const { data, isLoading, isFetching, error } = useQuery<PropertiesResponse>(
+		{
+			queryKey: ['properties', page, city, maxPrice, showFavorites],
+			queryFn: () => {
+				const currentPage = showFavorites ? 1 : page;
+				const limit = showFavorites ? 1000 : 3;
 
-			return getProperties(currentPage, { city, maxPrice }, limit);
+				return getProperties(currentPage, { city, maxPrice }, limit);
+			},
+			placeholderData: (prev: PropertiesResponse | undefined) => prev,
 		},
-		placeholderData: (prev) => prev,
-	});
-
+	);
 	// =========================
 	// 9. FILTER FAVORITES
 	// =========================
