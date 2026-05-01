@@ -14,13 +14,16 @@ export default function LoginPage() {
 		e.preventDefault();
 
 		try {
-			const res = await fetch('http://localhost:5000/api/auth/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json', //- відправляю JSON
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json', //- відправляю JSON
+					},
+					body: JSON.stringify({ email, password }), //це попадає на бекенді - у controller:
 				},
-				body: JSON.stringify({ email, password }), //це попадає на бекенді - у controller:
-			});
+			);
 
 			const data = await res.json(); //витягує дані з відповіді сервера у форматі JSON після fetch
 

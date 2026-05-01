@@ -131,7 +131,7 @@ export default function EditPropertyPage() {
 										className='relative group h-[90px]'
 									>
 										<img
-											src={`http://localhost:5000/${img}`}
+											src={`${process.env.NEXT_PUBLIC_API_URL}/${img}`}
 											className='w-full h-full object-cover rounded-lg'
 										/>
 

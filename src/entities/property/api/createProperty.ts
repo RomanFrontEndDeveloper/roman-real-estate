@@ -16,13 +16,16 @@ export const createProperty = async (data: {
 		formData.append('images', file); // 🔥 головне
 	});
 
-	const res = await fetch('http://127.0.0.1:5000/api/properties', {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${token}`, // ❗ БЕЗ Content-Type
+	const res = await fetch(
+		`${process.env.NEXT_PUBLIC_API_URL}/api/properties`,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`, // ❗ БЕЗ Content-Type
+			},
+			body: formData,
 		},
-		body: formData,
-	});
+	);
 
 	if (!res.ok) {
 		const errorText = await res.text();

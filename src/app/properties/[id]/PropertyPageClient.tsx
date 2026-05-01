@@ -70,7 +70,7 @@ export default function PropertyPageClient({ id }) {
 					property.images.map((img: string) => (
 						<img
 							key={img}
-							src={`http://localhost:5000/${img}`}
+							src={`${process.env.NEXT_PUBLIC_API_URL}/${img}`}
 							className='w-full h-[200px] object-cover rounded'
 							alt={property.title}
 						/>

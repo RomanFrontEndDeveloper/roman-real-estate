@@ -67,7 +67,7 @@ export const PropertyCard = ({ property }: Props) => {
 				<div className='relative w-full h-[220px] overflow-hidden'>
 					{property.images && property.images.length > 0 ? (
 						<img
-							src={`http://localhost:5000/${property.images[0]}`}
+							src={`${process.env.NEXT_PUBLIC_API_URL}/${property.images[0]}`}
 							className='w-full h-full object-cover'
 							alt={property.title}
 						/>

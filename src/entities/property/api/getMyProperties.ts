@@ -1,11 +1,14 @@
 export const getMyProperties = async () => {
 	const token = localStorage.getItem('token');
 
-	const res = await fetch('http://localhost:5000/api/properties/my', {
-		headers: {
-			Authorization: `Bearer ${token}`,
+	const res = await fetch(
+		`${process.env.NEXT_PUBLIC_API_URL}/api/properties/my`,
+		{
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 		},
-	});
+	);
 
 	// 🔥 ГОЛОВНЕ
 	if (res.status === 404) {

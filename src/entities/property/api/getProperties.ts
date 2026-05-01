@@ -9,7 +9,7 @@ export const getProperties = async (page = 1, filters?, limit = 3) => {
 		if (filters?.maxPrice) params.append('maxPrice', filters.maxPrice);
 
 		const res = await fetch(
-			`http://localhost:5000/api/properties?${params.toString()}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/api/properties?${params.toString()}`,
 		);
 
 		// якщо не знайдено

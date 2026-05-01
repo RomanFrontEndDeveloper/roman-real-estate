@@ -33,13 +33,16 @@ export const updateProperty = async ({
 		formData.append('images', file);
 	});
 
-	const res = await fetch(`http://localhost:5000/api/properties/${id}`, {
-		method: 'PATCH',
-		headers: {
-			Authorization: `Bearer ${token}`, // ❗ БЕЗ Content-Type
+	const res = await fetch(
+		`${process.env.NEXT_PUBLIC_API_URL}/api/properties/${id}`,
+		{
+			method: 'PATCH',
+			headers: {
+				Authorization: `Bearer ${token}`, // ❗ БЕЗ Content-Type
+			},
+			body: formData,
 		},
-		body: formData,
-	});
+	);
 
 	if (!res.ok) {
 		throw new Error('Failed to update property');
