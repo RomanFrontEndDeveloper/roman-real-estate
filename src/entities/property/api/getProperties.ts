@@ -32,6 +32,9 @@ export const getProperties = async (
 
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_API_URL}/api/properties?${params.toString()}`,
+			{
+				cache: 'no-store',
+			},
 		);
 
 		if (res.status === 404) {

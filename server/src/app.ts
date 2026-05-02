@@ -14,7 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 // 🔹 Static files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 // 🔹 Routes
 app.use('/api/properties', propertyRoutes); //Ти “підключаєш” роутер propertyRoutes до базового URL
