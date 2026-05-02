@@ -73,9 +73,9 @@ export const Footer = () => {
 							</Link>
 						</li>
 						<li>
-							<Link href='/agents' className={linkClass}>
+							{/* <Link href='/agents' className={linkClass}>
 								Agents
-							</Link>
+							</Link> */}
 						</li>
 					</ul>
 				</div>
