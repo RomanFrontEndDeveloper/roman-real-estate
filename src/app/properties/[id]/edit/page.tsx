@@ -128,10 +128,10 @@ export default function EditPropertyPage() {
 								{existingImages.map((img, index) => (
 									<div
 										key={img + index}
-										className='relative group h-[90px]'
+										className='relative group h-[90px] w-[120px]'
 									>
 										<img
-											src={`${process.env.NEXT_PUBLIC_API_URL}/${property.images[0]}`}
+											src={`${process.env.NEXT_PUBLIC_API_URL}/${img}`}
 											className='w-full h-full object-cover rounded-lg'
 										/>
 
