@@ -19,7 +19,6 @@ type Props = {
 };
 
 export const PropertyCard = ({ property }: Props) => {
-	console.log(property.images);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const router = useRouter();
