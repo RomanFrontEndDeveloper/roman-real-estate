@@ -37,8 +37,6 @@ export default function LoginPage() {
 			if (!res.ok) {
 				throw new Error(data.message || 'Login failed');
 			}
-
-			console.log(data);
 		} catch (error) {
 			console.error('Login error:', error);
 		}

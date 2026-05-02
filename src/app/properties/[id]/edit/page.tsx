@@ -45,7 +45,7 @@ export default function EditPropertyPage() {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log('FILES:', files);
+
 		mutation.mutate({
 			id: id as string,
 			data: {
@@ -103,7 +103,7 @@ export default function EditPropertyPage() {
 							if (e.target.files) {
 								//(e.target.files) це FileList НЕ масив
 								const arr = Array.from(e.target.files); //перетворюєм в масив File[]
-								console.log('SELECTED FILES:', arr);
+
 								setFiles((prev) => [
 									...prev,
 									...Array.from(e.target.files!),
