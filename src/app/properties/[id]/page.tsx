@@ -2,13 +2,13 @@ import { getPropertyById } from '@/entities/property/api/getPropertyById';
 import PropertyPageClient from './PropertyPageClient';
 
 type Props = {
-	params: {
+	params: Promise<{
 		id: string;
-	};
+	}>;
 };
 // 🔥 SEO
 export async function generateMetadata({ params }: Props) {
-	const { id } = params;
+	const { id } = await params;
 
 	try {
 		const property = await getPropertyById(id);
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props) {
 
 // 🔥 PAGE
 export default async function Page({ params }: Props) {
-	const { id } = params;
+	const { id } = await params;
 
 	return <PropertyPageClient id={id} />;
 }
