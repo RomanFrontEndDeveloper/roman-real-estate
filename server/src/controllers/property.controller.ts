@@ -5,8 +5,23 @@ import { AuthRequest } from '../middleware/auth.middleware';
 import cloudinary from '../config/cloudinary';
 import streamifier from 'streamifier';
 
-// helper для перевірки ID
+// helper
 const isValidId = (id: string) => mongoose.Types.ObjectId.isValid(id);
+
+// 🔥 upload helper
+const uploadToCloudinary = (file: Express.Multer.File): Promise<string> => {
+	return new Promise((resolve, reject) => {
+		const stream = cloudinary.uploader.upload_stream(
+			{ folder: 'real-estate' },
+			(error, result) => {
+				if (error) return reject(error);
+				resolve(result!.secure_url);
+			},
+		);
+
+		streamifier.createReadStream(file.buffer).pipe(stream);
+	});
+};
 
 // 📥 Отримати всі
 export const getProperties: RequestHandler = async (req, res, next) => {
@@ -14,10 +29,7 @@ export const getProperties: RequestHandler = async (req, res, next) => {
 		const page = Number(req.query.page) || 1;
 		const limit = Number(req.query.limit) || 3;
 
-		const filter: {
-			location?: { $regex: string; $options: string };
-			price?: { $lte: number };
-		} = {};
+		const filter: any = {};
 
 		if (req.query.city) {
 			filter.location = {
@@ -54,7 +66,7 @@ export const getProperties: RequestHandler = async (req, res, next) => {
 // 📥 Отримати один
 export const getPropertyById: RequestHandler = async (req, res, next) => {
 	try {
-		const id = req.params.id as string;
+		const id = req.params.id;
 
 		if (!isValidId(id)) {
 			return next({ status: 400, message: 'Invalid ID' });
@@ -72,47 +84,43 @@ export const getPropertyById: RequestHandler = async (req, res, next) => {
 	}
 };
 
-// ➕ Створити
-
-export const createProperty = async (req, res) => {
+// ➕ CREATE (🔥 Cloudinary)
+export const createProperty: RequestHandler = async (
+	req: AuthRequest,
+	res,
+	next,
+) => {
 	try {
-		const files = req.files as Express.Multer.File[];
+		const files = req.files as Express.Multer.File[] | undefined;
 
-		const uploadOne = (file: Express.Multer.File) =>
-			new Promise<string>((resolve, reject) => {
-				const stream = cloudinary.uploader.upload_stream(
-					{ folder: 'real-estate' },
-					(error, result) => {
-						if (error) return reject(error);
-						resolve(result!.secure_url);
-					},
-				);
+		let imageUrls: string[] = [];
 
-				streamifier.createReadStream(file.buffer).pipe(stream);
-			});
+		if (files && files.length > 0) {
+			imageUrls = await Promise.all(files.map(uploadToCloudinary));
+		}
 
-		const imageUrls = await Promise.all(files.map(uploadOne));
-
-		const property = await Property.create({
-			...req.body,
-			images: imageUrls,
+		const property = await PropertyModel.create({
+			title: req.body.title,
+			price: Number(req.body.price) || 0,
+			location: req.body.location,
+			images: imageUrls, // 🔥 тільки URL
+			owner: req.user!.id,
 		});
 
-		res.json(property);
-	} catch (e) {
-		console.error(e);
-		res.status(500).json({ message: 'Upload error' });
+		res.status(201).json(property);
+	} catch (error) {
+		next(error);
 	}
 };
 
-// ❌ Видалити
+// ❌ DELETE
 export const deleteProperty: RequestHandler = async (
 	req: AuthRequest,
 	res,
 	next,
 ) => {
 	try {
-		const id = req.params.id as string;
+		const id = req.params.id;
 
 		if (!isValidId(id)) {
 			return next({ status: 400, message: 'Invalid ID' });
@@ -139,14 +147,14 @@ export const deleteProperty: RequestHandler = async (
 	}
 };
 
-// ✏️ Оновити
+// ✏️ UPDATE (🔥 теж через Cloudinary)
 export const updateProperty: RequestHandler = async (
 	req: AuthRequest,
 	res,
 	next,
 ) => {
 	try {
-		const id = req.params.id as string;
+		const id = req.params.id;
 
 		if (!isValidId(id)) {
 			return next({ status: 400, message: 'Invalid ID' });
@@ -167,6 +175,12 @@ export const updateProperty: RequestHandler = async (
 
 		const files = req.files as Express.Multer.File[] | undefined;
 
+		let newImages: string[] = [];
+
+		if (files && files.length > 0) {
+			newImages = await Promise.all(files.map(uploadToCloudinary));
+		}
+
 		const existingImages = ([] as string[])
 			.concat(req.body.existingImages || [])
 			.filter(Boolean);
@@ -175,7 +189,7 @@ export const updateProperty: RequestHandler = async (
 			title: req.body.title,
 			price: Number(req.body.price) || 0,
 			location: req.body.location,
-			images: [...existingImages, ...(files?.map((f) => f.path) || [])],
+			images: [...existingImages, ...newImages], // 🔥 комбінуємо
 		});
 
 		await property.save();
@@ -186,7 +200,7 @@ export const updateProperty: RequestHandler = async (
 	}
 };
 
-// 📥 Мої оголошення
+// 📥 Мої
 export const getMyProperties: RequestHandler = async (
 	req: AuthRequest,
 	res,
@@ -202,7 +216,3 @@ export const getMyProperties: RequestHandler = async (
 		next(error);
 	}
 };
-
-// Це middleware для перевірки JWT.
-// Я беру токен із заголовка Authorization, перевіряю його через jwt.verify, і якщо він валідний — додаю payload у req.user.
-// Якщо токен відсутній або неправильний — повертаю 401.
