@@ -46,7 +46,7 @@ export default function PropertyPageClient({ id }: Props) {
 		},
 	});
 
-	const currentId = property?.id || property?._id;
+	const currentId = property?.id;
 
 	const handleDelete = () => {
 		if (!currentId) return;

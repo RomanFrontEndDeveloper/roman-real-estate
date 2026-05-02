@@ -2,7 +2,7 @@ export const deleteProperty = async (id: string) => {
 	const token = localStorage.getItem('token');
 
 	if (!token) {
-		throw new Error('No token found. Please login.');
+		throw new Error('You are not logged in');
 	}
 
 	const res = await fetch(
@@ -10,13 +10,14 @@ export const deleteProperty = async (id: string) => {
 		{
 			method: 'DELETE',
 			headers: {
-				Authorization: `Bearer ${token}`, // 🔐 ОБОВʼЯЗКОВО
+				Authorization: `Bearer ${token}`,
 			},
 		},
 	);
 
 	if (!res.ok) {
-		throw new Error('Failed to delete property');
+		const data = await res.json().catch(() => null);
+		throw new Error(data?.message || `Error ${res.status}`);
 	}
 
 	return true;

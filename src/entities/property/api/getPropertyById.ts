@@ -9,8 +9,12 @@ export const getPropertyById = async (id: string) => {
 
 	const data = await res.json();
 
+	if (!data || !data._id) {
+		throw new Error('Property not found');
+	}
+
 	return {
 		...data,
-		id: data._id, // 🔥 ОСЬ ЦЕ ГОЛОВНЕ
+		id: data._id,
 	};
 };
