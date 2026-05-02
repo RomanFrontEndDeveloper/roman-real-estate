@@ -15,10 +15,10 @@ app.use(express.json());
 
 // 🔹 Static files
 
-app.use(
-	'/uploads',
-	express.static(path.resolve(process.cwd(), 'server/uploads')),
-);
+// app.use(
+// 	'/uploads',
+// 	express.static(path.resolve(process.cwd(), 'server/uploads')),
+// );
 
 // 🔹 Routes
 app.use('/api/properties', propertyRoutes); //Ти “підключаєш” роутер propertyRoutes до базового URL

@@ -2,6 +2,8 @@ import { RequestHandler } from 'express';
 import mongoose from 'mongoose';
 import { PropertyModel } from '../models/property.model';
 import { AuthRequest } from '../middleware/auth.middleware';
+import cloudinary from '../config/cloudinary';
+import streamifier from 'streamifier';
 
 // helper для перевірки ID
 const isValidId = (id: string) => mongoose.Types.ObjectId.isValid(id);
@@ -71,25 +73,35 @@ export const getPropertyById: RequestHandler = async (req, res, next) => {
 };
 
 // ➕ Створити
-export const createProperty: RequestHandler = async (
-	req: AuthRequest,
-	res,
-	next,
-) => {
-	try {
-		const files = req.files as Express.Multer.File[] | undefined;
 
-		const property = await PropertyModel.create({
-			title: req.body.title,
-			price: Number(req.body.price) || 0,
-			location: req.body.location,
-			images: files?.map((f) => f.path) || [],
-			owner: req.user!.id,
+export const createProperty = async (req, res) => {
+	try {
+		const files = req.files as Express.Multer.File[];
+
+		const uploadOne = (file: Express.Multer.File) =>
+			new Promise<string>((resolve, reject) => {
+				const stream = cloudinary.uploader.upload_stream(
+					{ folder: 'real-estate' },
+					(error, result) => {
+						if (error) return reject(error);
+						resolve(result!.secure_url);
+					},
+				);
+
+				streamifier.createReadStream(file.buffer).pipe(stream);
+			});
+
+		const imageUrls = await Promise.all(files.map(uploadOne));
+
+		const property = await Property.create({
+			...req.body,
+			images: imageUrls,
 		});
 
-		res.status(201).json(property);
-	} catch (error) {
-		next(error);
+		res.json(property);
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({ message: 'Upload error' });
 	}
 };
 
