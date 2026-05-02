@@ -1,20 +1,20 @@
-# RomanRealEstate 🏡
+# 🏡 RomanRealEstate
 
-Fullstack real estate platform with authentication, property management, and modern UI.
+Fullstack real estate platform with authentication, property management, and cloud-based image storage.
 
 ---
 
 ## 🚀 Overview
 
-RomanRealEstate is a fullstack web application that allows users to create, manage, and explore real estate listings.
+**RomanRealEstate** is a fullstack web application that allows users to create, manage, and explore real estate listings.
 
-The project is built with a focus on real-world architecture, including authentication, API integration, file uploads, and deployment.
+The project simulates a real production-ready system with authentication, API integration, file uploads, and deployment using modern tools.
 
 ---
 
 ## 🛠 Tech Stack
 
-### Frontend
+### 🎨 Frontend
 
 - Next.js (App Router)
 - React
@@ -22,16 +22,21 @@ The project is built with a focus on real-world architecture, including authenti
 - Tailwind CSS
 - TanStack Query (React Query)
 
-### Backend
+### ⚙️ Backend
 
 - Node.js
 - Express.js
 - MongoDB
 - Mongoose
 - JSON Web Token (JWT)
-- Multer (file uploads)
+- Multer (memory storage)
 
-### Deployment
+### ☁️ Cloud & Services
+
+- Cloudinary (image storage & CDN)
+- Streamifier (buffer → stream upload)
+
+### 🚀 Deployment
 
 - Frontend: Vercel
 - Backend: Render
@@ -48,10 +53,10 @@ The project is built with a focus on real-world architecture, including authenti
 
 ### 🏠 Properties
 
-- Create property with image upload
-- View all properties (with filters & pagination)
+- Create property with image upload (Cloudinary)
+- View all properties (filters & pagination)
 - View single property page
-- Edit property (partial implementation)
+- Edit property (with image update)
 - Delete property
 
 ### ❤️ User Features
@@ -63,9 +68,22 @@ The project is built with a focus on real-world architecture, including authenti
 
 - Responsive design
 - Modern card-based layout
-- Image preview & gallery
+- Image gallery preview
 - Toast notifications
 - Loading & error states
+
+---
+
+## 📦 Image Upload (IMPORTANT)
+
+Images are handled using a production-ready pipeline:
+
+Client → FormData → Express → Multer → Cloudinary → MongoDB → Client
+
+- Files are uploaded via `multipart/form-data`
+- Stored in **Cloudinary (not locally)**
+- Database stores only image URLs
+- Images are served via CDN (fast & scalable)
 
 ---
 
@@ -74,7 +92,7 @@ The project is built with a focus on real-world architecture, including authenti
 ```
 client/
   app/          # Next.js routes (App Router)
-  entities/     # Business logic (API, types)
+  entities/     # API logic & types
   shared/       # UI components
 
 server/
@@ -82,7 +100,30 @@ server/
   routes/       # API routes
   models/       # Mongoose models
   middleware/   # Auth & error handling
-  services/     # Business logic
+  config/       # Cloudinary config
+```
+
+---
+
+## ⚙️ Environment Variables
+
+### Backend (`/server/.env`)
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection
+JWT_SECRET=your_secret_key
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+### Frontend (`/client/.env.local`)
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
 ---
@@ -92,7 +133,7 @@ server/
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/your-username/roman-real-estate.git
+git clone https://github.com/RomanFrontEndDeveloper/roman-real-estate.git
 cd roman-real-estate
 ```
 
@@ -116,37 +157,17 @@ npm install
 
 ---
 
-### 3. Environment variables
-
-Create `.env` file in `/server`:
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection
-JWT_SECRET=your_secret_key
-```
-
-Frontend `.env.local`:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-```
-
----
-
-### 4. Run project
+### 3. Run project
 
 #### Backend
 
 ```bash
-cd server
 npm run dev
 ```
 
 #### Frontend
 
 ```bash
-cd client
 npm run dev
 ```
 
@@ -177,30 +198,32 @@ GET    /api/users/me
 1. User logs in → receives JWT token
 2. Token is stored on client
 3. Token is sent via Authorization header
-4. Backend verifies token (middleware)
-5. User gets access to protected routes
-
----
-
-## 📦 File Upload
-
-- Images are uploaded using `multipart/form-data`
-- Stored on server (`/uploads`)
-- Served as static files via Express
+4. Backend verifies token
+5. Access to protected routes is granted
 
 ---
 
 ## 🚀 Deployment
 
-- Frontend deployed on Vercel
-- Backend deployed on Render
+- Frontend deployed on **Vercel**
+- Backend deployed on **Render**
+- Images stored in **Cloudinary CDN**
+
+---
+
+## 💡 Key Highlights
+
+- Real-world fullstack architecture
+- Cloud-based file storage (no local filesystem issues)
+- Type-safe backend (TypeScript)
+- REST API with authentication
+- Scalable and production-ready setup
 
 ---
 
 ## 📌 Project Goal
 
-This project is designed to simulate a real production-ready fullstack application
-and demonstrate skills required for a Junior / Strong Junior / Middle Frontend Developer role.
+This project demonstrates real-world development skills required for a **Junior / Strong Junior / Middle Frontend Developer** role, including backend integration and API design.
 
 ---
 
@@ -211,3 +234,5 @@ Frontend / Fullstack Developer
 
 - Email: [romariotraveler@gmail.com](mailto:romariotraveler@gmail.com)
 - Telegram: @T168234
+
+---
