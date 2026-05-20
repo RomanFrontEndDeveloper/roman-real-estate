@@ -1,14 +1,30 @@
 # 🏡 RomanRealEstate
 
-Fullstack real estate platform with authentication, property management, and cloud-based image storage.
+A production-style **fullstack real estate platform** built with modern web technologies.
+
+The application allows users to browse, create, manage, and favorite real estate listings with secure authentication, role-based permissions, cloud image storage, and a scalable architecture.
 
 ---
 
-## 🚀 Overview
+## 🚀 Live Demo
 
-**RomanRealEstate** is a fullstack web application that allows users to create, manage, and explore real estate listings.
+### Frontend
 
-The project simulates a real production-ready system with authentication, API integration, file uploads, and deployment using modern tools.
+[Live Website](YOUR_VERCEL_URL)
+
+### Backend API
+
+[API Server](YOUR_RENDER_URL)
+
+---
+
+## 📌 Overview
+
+**RomanRealEstate** is a fullstack real estate web application inspired by real-world marketplace platforms.
+
+The project demonstrates practical frontend and backend development skills, including authentication, protected routes, role-based authorization, image uploads, API design, cloud storage, pagination, filtering, and production-ready architecture.
+
+The system supports multiple user roles and ownership-based permissions to ensure secure property management.
 
 ---
 
@@ -29,6 +45,7 @@ The project simulates a real production-ready system with authentication, API in
 - MongoDB
 - Mongoose
 - JSON Web Token (JWT)
+- Zod Validation
 - Multer (memory storage)
 
 ### ☁️ Cloud & Services
@@ -43,84 +60,226 @@ The project simulates a real production-ready system with authentication, API in
 
 ---
 
-## ⚙️ Features
+## ✨ Features
 
-### 🔐 Authentication
+### 🔐 Authentication & Authorization
 
 - User registration & login
 - JWT-based authentication
 - Protected API routes
+- Role-based authorization
 
-### 🏠 Properties
+Roles:
 
-- Create property with image upload (Cloudinary)
-- View all properties (filters & pagination)
-- View single property page
-- Edit property (with image update)
+```txt
+admin
+agent
+```
+
+Access control:
+
+- Only property owners can edit/delete their own listings
+- Admin can manage all properties
+
+---
+
+### 🏠 Property Management
+
+- Create property listing
+- Upload property images to Cloudinary
+- View all listings
+- View single property details
+- Edit property
 - Delete property
+- Ownership protection
 
-### ❤️ User Features
+---
 
-- Add/remove favorites
-- Fetch current user data
+### 🔍 Filtering & Search
 
-### 🎨 UI/UX
+Users can filter properties by:
+
+- Maximum price
+- City district
+
+Additional features:
+
+- Debounced search requests
+- Server-side filtering
+- Pagination support
+
+---
+
+### ❤️ Favorites System
+
+- Add property to favorites
+- Remove property from favorites
+- Persistent favorite state
+
+---
+
+### 🎨 UI/UX Features
 
 - Responsive design
-- Modern card-based layout
-- Image gallery preview
+- Reusable UI components
+- Skeleton loading states
 - Toast notifications
-- Loading & error states
+- Loading & error handling
+- Modern card-based interface
+- Image preview gallery
 
 ---
 
-## 📦 Image Upload (IMPORTANT)
+## 🧠 Architecture
 
-Images are handled using a production-ready pipeline:
+The project follows a scalable and maintainable architecture.
 
-Client → FormData → Express → Multer → Cloudinary → MongoDB → Client
+### Backend Architecture
 
-- Files are uploaded via `multipart/form-data`
-- Stored in **Cloudinary (not locally)**
-- Database stores only image URLs
-- Images are served via CDN (fast & scalable)
-
----
-
-## 📁 Project Structure
-
+```txt
+routes
+→ middleware
+→ controller
+→ service
+→ database
 ```
-client/
-  app/          # Next.js routes (App Router)
-  entities/     # API logic & types
-  shared/       # UI components
 
-server/
-  controllers/  # Request handlers
-  routes/       # API routes
-  models/       # Mongoose models
-  middleware/   # Auth & error handling
-  config/       # Cloudinary config
+Project structure:
+
+```txt
+server/src/
+├── config/
+├── controllers/
+├── middleware/
+├── models/
+├── routes/
+├── services/
+```
+
+### Frontend Architecture
+
+The frontend follows a modular structure inspired by scalable frontend architecture principles.
+
+```txt
+src/
+├── app/
+├── entities/
+│   ├── property/
+│   └── user/
+├── shared/
+│   ├── components/
+│   └── ui/
+```
+
+Separation of concerns:
+
+- API logic
+- UI components
+- reusable shared components
+- feature-specific modules
+- type-safe architecture
+
+---
+
+## 📦 Image Upload Pipeline
+
+Images are processed using a production-ready upload flow:
+
+```txt
+Client
+→ FormData
+→ Express
+→ Multer (memory storage)
+→ Streamifier
+→ Cloudinary
+→ MongoDB
+→ Client
+```
+
+### Why Cloudinary?
+
+Images are:
+
+- not stored locally
+- optimized for performance
+- served through CDN
+- scalable for production
+
+The database stores only image URLs.
+
+---
+
+## 🔒 Security & Validation
+
+Implemented security and validation features:
+
+- JWT authentication
+- Protected routes
+- Ownership authorization
+- Role-based access control
+- Zod schema validation
+- Global error handling middleware
+
+---
+
+## 📄 API Endpoints
+
+### Authentication
+
+```http
+POST /api/auth/register
+POST /api/auth/login
+```
+
+### Properties
+
+```http
+GET    /api/properties
+GET    /api/properties/:id
+GET    /api/properties/my
+
+POST   /api/properties
+PATCH  /api/properties/:id
+DELETE /api/properties/:id
+```
+
+### Users
+
+```http
+POST   /api/users/favorites
+GET    /api/users/me
+```
+
+---
+
+## 🔐 Authentication Flow
+
+```txt
+User logs in
+→ JWT token issued
+→ Token stored on client
+→ Authorization header attached
+→ Backend verifies token
+→ Access granted to protected resources
 ```
 
 ---
 
 ## ⚙️ Environment Variables
 
-### Backend (`/server/.env`)
+### Backend (`server/.env`)
 
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_connection
 JWT_SECRET=your_secret_key
 
-# Cloudinary
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### Frontend (`/client/.env.local`)
+### Frontend (`.env.local`)
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
@@ -130,21 +289,18 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
 
 ## 🚀 Getting Started
 
-### 1. Clone repository
+### Clone repository
 
 ```bash
 git clone https://github.com/RomanFrontEndDeveloper/roman-real-estate.git
 cd roman-real-estate
 ```
 
----
-
-### 2. Install dependencies
+### Install dependencies
 
 #### Frontend
 
 ```bash
-cd client
 npm install
 ```
 
@@ -155,9 +311,7 @@ cd server
 npm install
 ```
 
----
-
-### 3. Run project
+### Run development server
 
 #### Backend
 
@@ -173,66 +327,40 @@ npm run dev
 
 ---
 
-## 🌐 API Endpoints
-
-```
-POST   /api/auth/register
-POST   /api/auth/login
-
-GET    /api/properties
-GET    /api/properties/:id
-GET    /api/properties/my
-
-POST   /api/properties
-PATCH  /api/properties/:id
-DELETE /api/properties/:id
-
-POST   /api/users/favorites
-GET    /api/users/me
-```
-
----
-
-## 🔐 Authentication Flow
-
-1. User logs in → receives JWT token
-2. Token is stored on client
-3. Token is sent via Authorization header
-4. Backend verifies token
-5. Access to protected routes is granted
-
----
-
-## 🚀 Deployment
-
-- Frontend deployed on **Vercel**
-- Backend deployed on **Render**
-- Images stored in **Cloudinary CDN**
-
----
-
 ## 💡 Key Highlights
 
-- Real-world fullstack architecture
-- Cloud-based file storage (no local filesystem issues)
-- Type-safe backend (TypeScript)
-- REST API with authentication
-- Scalable and production-ready setup
+✅ Fullstack Architecture  
+✅ Authentication & Authorization  
+✅ Role-Based Access Control  
+✅ Ownership Permissions  
+✅ REST API  
+✅ Cloud Image Upload  
+✅ Pagination & Filtering  
+✅ Debounced Search  
+✅ Favorites System  
+✅ Skeleton Loading  
+✅ Type-Safe Development (TypeScript)  
+✅ Zod Validation  
+✅ Global Error Handling  
+✅ React Query Data Fetching  
+✅ Production Deployment
 
 ---
 
-## 📌 Project Goal
+## 🎯 Project Goal
 
-This project demonstrates real-world development skills required for a **Junior / Strong Junior / Middle Frontend Developer** role, including backend integration and API design.
+This project demonstrates real-world development skills required for a:
+
+**Junior / Strong Junior / Middle Frontend Developer**
+
+with backend integration experience and production-oriented architecture.
 
 ---
 
 ## 📧 Contact
 
-**Roman Okhremov**
+**Roman Okhremov**  
 Frontend / Fullstack Developer
 
-- Email: [romariotraveler@gmail.com](mailto:romariotraveler@gmail.com)
-- Telegram: @T168234
-
----
+📩 Email: romariotraveler@gmail.com  
+💬 Telegram: @T168234
