@@ -10,11 +10,11 @@ The application allows users to browse, create, manage, and favorite real estate
 
 ### Frontend
 
-[Live Website](YOUR_VERCEL_URL)
+[Live Website] https://roman-real-estate.vercel.app/
 
 ### Backend API
 
-[API Server](YOUR_RENDER_URL)
+[API Server] NEXT_PUBLIC_API_URL=https://roman-real-estate.onrender.com
 
 ---
 
@@ -269,21 +269,20 @@ User logs in
 
 ### Backend (`server/.env`)
 
-```env
+````env
 PORT=5000
-MONGO_URI=your_mongodb_connection
-JWT_SECRET=your_secret_key
-
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
+MONGO_URI=mongodb://127.0.0.1:27017/realestate
+JWT_SECRET=9s8df7sdf9s8df7sdf98s7df9s8df7sdf98
+PORT=10000
+CLOUD_NAME=di09s8lwl
+CLOUD_API_KEY=981414496672337
+CLOUD_API_SECRET=BP8R0V34GCvyyMxdsNLyXqY3m80
 
 ### Frontend (`.env.local`)
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
-```
+````
 
 ---
 
