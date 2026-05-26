@@ -22,7 +22,7 @@ export const getProperties = async (
 	limit = 3,
 ) => {
 	try {
-		const params = new URLSearchParams();
+		const params = new URLSearchParams(); // створює об’єкт для query parameters (параметрів URL).
 
 		params.append('page', String(page));
 		params.append('limit', String(limit));
@@ -33,7 +33,7 @@ export const getProperties = async (
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_API_URL}/api/properties?${params.toString()}`,
 			{
-				cache: 'no-store',
+				cache: 'no-store', // Не кешуй відповідь. Завжди роби новий запит на сервер
 			},
 		);
 

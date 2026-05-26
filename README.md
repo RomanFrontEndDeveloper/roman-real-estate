@@ -271,12 +271,12 @@ User logs in
 
 ````env
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/realestate
-JWT_SECRET=9s8df7sdf9s8df7sdf98s7df9s8df7sdf98
-PORT=10000
-CLOUD_NAME=di09s8lwl
-CLOUD_API_KEY=981414496672337
-CLOUD_API_SECRET=BP8R0V34GCvyyMxdsNLyXqY3m80
+MONGO_URI=mongodb:*****
+JWT_SECRET=******
+PORT=*****
+CLOUD_NAME=*****
+CLOUD_API_KEY=*******
+CLOUD_API_SECRET=***********
 
 ### Frontend (`.env.local`)
 

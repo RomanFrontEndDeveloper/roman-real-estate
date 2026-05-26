@@ -20,7 +20,7 @@ export const ConfirmModal = ({
 }: Props) => {
 	if (!isOpen) return null;
 
-	// 👉 один універсальний стопер
+	// потрібно, щоб клік всередині модалки НЕ закривав модалку.
 	const stop = (e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();

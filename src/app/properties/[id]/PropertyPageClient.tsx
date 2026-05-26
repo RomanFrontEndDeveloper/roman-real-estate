@@ -25,8 +25,8 @@ export default function PropertyPageClient({ id }: Props) {
 	const { data: property, isLoading } = useQuery({
 		queryKey: ['property', propertyId],
 		queryFn: () => getPropertyById(propertyId),
-		retry: false,
-		enabled: !!propertyId,
+		retry: false, // не повторювати запит при помилці або (retry: 3)
+		enabled: !!propertyId, // запускати query тільки якщо propertyId існує
 	});
 
 	// 🔥 DELETE
@@ -46,7 +46,7 @@ export default function PropertyPageClient({ id }: Props) {
 		},
 	});
 
-	const currentId = property?.id;
+	const currentId = property?.id; // Це id уже завантаженої property
 
 	const handleDelete = () => {
 		if (!currentId) return;
@@ -103,7 +103,7 @@ export default function PropertyPageClient({ id }: Props) {
 					<p className='text-gray-400 mb-4'>📍 {property.location}</p>
 
 					<p className='text-2xl font-semibold text-white'>
-						${property.price.toLocaleString()}
+						${property.price.toLocaleString()} {/* 2 500 000 */}
 					</p>
 				</div>
 

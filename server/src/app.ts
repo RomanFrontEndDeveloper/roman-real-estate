@@ -1,7 +1,5 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import path from 'path'; // робота з файловою системою (шлях до папок)
-
 import propertyRoutes from './routes/property.routes';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
@@ -9,23 +7,16 @@ import { errorHandler } from './middleware/error.middleware';
 
 export const app = express();
 
-// 🔹 Middlewares
-app.use(cors());
-app.use(express.json());
+// Middleware — це код, який виконується між request і response.
+app.use(cors()); //дозволяє іншим сайтам (frontend) робити запити до backend.
+app.use(express.json()); //дозволяє Express читати JSON із body request.
 
-// 🔹 Static files
-
-// app.use(
-// 	'/uploads',
-// 	express.static(path.resolve(process.cwd(), 'server/uploads')),
-// );
-
-// 🔹 Routes
-app.use('/api/properties', propertyRoutes); //Ти “підключаєш” роутер propertyRoutes до базового URL
+//це підключення routes (маршрутів) до Express. ти кажеш Express, де шукати обробники запитів.
+app.use('/api/properties', propertyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
-// 🔹 Test route
+//якщо хтось відкриє /, повернути текст "API is working 🚀".
 app.get('/', (req: Request, res: Response) => {
 	res.send('API is working 🚀');
 });

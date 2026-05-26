@@ -8,7 +8,7 @@ export const metadata = {
 	description: 'Find the best real estate properties...',
 };
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // "Завжди рендерити сторінку динамічно при кожному запиті" Тобто не кешувати HTML сторінки.
 
 export default async function Home() {
 	let properties;
